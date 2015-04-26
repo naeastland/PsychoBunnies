@@ -1,0 +1,187 @@
+/*************************************************************
+Programmer: Nate Eastland
+Class: Cpts 122, Spring 2015; Lab Section 6
+Programming Assignment: PA3 - Evaluation of Infix Expressions using Stacks
+Date: 2-16-2015
+Description: This program translates infix expressions into postfix
+			and evaluates them.
+*************************************************************/
+
+#include "test.h"
+
+/*******************************************************
+  Function: testMain()                   
+  Date Created: 2-16-2015                                            
+  Date Last Modified: 2-16-2015                                      
+  Description: This function runs a few test functions to demonstrate the
+				operation of functions within the program.
+  Input parameters: None                                    
+  Returns: Nothing                                         
+********************************************************/ 
+
+void testMain()
+{
+	testConvert();
+	testCalc();
+	testOpPrec();
+	testStack();
+
+	putchar('\n');
+	printf("Now you may test the program with your own expressions\n");
+	acceptInfix();	
+}
+
+/*******************************************************
+  Function: testConvert()                   
+  Date Created: 2-16-2015                                            
+  Date Last Modified: 2-16-2015                                      
+  Description: This function tests the functionality of the program
+				to convert an infix expression into postfix and evaluate.
+  Input parameters: None                                   
+  Returns: Nothing                                         
+********************************************************/ 
+
+void testConvert()
+{
+	char test1[] = "(6+2)*5-8/4\n", test2[] = "6*6-5*5+9/3\n", test3[] = "3*(4+5)+3\n",
+		postfix1[MAX_SIZE], postfix2[MAX_SIZE], postfix3[MAX_SIZE];
+
+	printf("*****Here are some sample infix expressions*****\n");
+	
+	convertToPostfix(test1, postfix1);
+	convertToPostfix(test2, postfix2);
+	convertToPostfix(test3, postfix3);
+}
+
+/*******************************************************
+  Function: testCalc()                   
+  Date Created: 2-16-2015                                            
+  Date Last Modified: 2-16-2015                                      
+  Description: This function demostrates the ability of the calculate and
+				isOperator() functions to identify an specific operator and
+				make an individual calculation based on those inputs.
+  Input parameters: None                                    
+  Returns: Nothing                                         
+********************************************************/ 
+
+void testCalc()
+{
+	int a = 5, b = 2, c = 8, d = 7, isOp = 0, result = 0;
+	char op1 = '+', op2 = '%', op3 = '*', op4 = '^';
+
+	printf("*****This is a test of the isOperator and calculate functions*****\n");
+
+	printf("Operator 1: %c\n", op1);
+	isOp = isOperator(op1);
+	printf("Result of isOperator: %d\n", isOp);
+
+	printf("Operator 2: %c\n", op2);
+	isOp = isOperator(op2);
+	printf("Result of isOperator: %d\n", isOp);
+
+	printf("Operator 3: %c\n", op3);
+	isOp = isOperator(op3);
+	printf("Result of isOperator: %d\n", isOp);
+
+	printf("Operator 4: %c\n", op4);
+	isOp = isOperator(op4);
+	printf("Result of isOperator: %d\n", isOp);
+
+	result = calculate(a, b, op1);
+	printf("The result of %d %c %d = %d\n", a, op1, b, result);
+
+	result = calculate(b, d, op2);
+	printf("The result of %d %c %d = %d\n", b, op2, d, result);
+
+	result = calculate(a, d, op3);
+	printf("The result of %d %c %d = %d\n", a, op3, d, result);
+
+	result = calculate(b, c, op4);
+	printf("The result of %d %c %d = %d\n", b, op4, c, result);
+	putchar('\n');
+}
+
+/*******************************************************
+  Function: testOpPrec()                   
+  Date Created: 2-16-2015                                            
+  Date Last Modified: 2-16-2015                                      
+  Description: This function demonstrates the output of the precedence()
+				function to determine whether the first operator passed to it 
+				is of higher precedence than the second or not.
+  Input parameters: None                                  
+  Returns: Nothing                                          
+********************************************************/ 
+
+void testOpPrec()
+{
+	int result = -1;
+	char op1 = '+', op2 = '-', op3 = '*', op4 = '/', op5 = '%', op6 = '^';
+
+	printf("*****This function indicates an operators precendence*****\n");
+	printf("*****0 indicates op1 <= op2. 1 indicates op1 > op2*****\n");
+
+	printf("Initial result value: %d\n", result);
+	printf("Op1: %c\n", op1);
+	printf("Op2: %c\n", op2);
+	printf("Op3: %c\n", op3);
+	printf("Op4: %c\n", op4);
+	printf("Op5: %c\n", op5);
+	printf("Op6: %c\n", op6);
+
+	result = precendence(op1, op2);
+	printf("Op1 and Op2: %d\n", result);
+
+	result = precendence(op1, op4);
+	printf("Op1 and Op4: %d\n", result);
+
+	result = precendence(op4, op1);
+	printf("Op4 and Op1: %d\n", result);
+
+	result = precendence(op5, op4);
+	printf("Op5 and Op4: %d\n", result);
+}
+
+/*******************************************************
+  Function: testStack()                   
+  Date Created: 2-16-2016
+  Date Last Modified: 2-16-2015                                      
+  Description: This function demonstrates the functionality of push(),
+				pop(), and isEmpty().
+  Input parameters: None                                   
+  Returns: Nothing                                         
+********************************************************/ 
+
+void testStack()
+{
+	StackNodePtr top = NULL;
+	int temp = -1;
+	char dat1 = 'Q', dat2 = 'P', dat3 = 'A';
+
+	printf("*****This is a test of push(), pop(), isEmpty()*****\n");
+	printf("Initial value of temp = %d. 1 represents empty, 0 not empty\n", temp);
+
+	temp = isEmpty(top);
+	printf("Temp = %d\n", temp);
+
+	push(&top, dat1);
+	push(&top, dat2);
+	push(&top, dat3);
+
+	temp = isEmpty(top);
+	printf("Temp = %d\n", temp);
+
+	printf("Top->data: %c\n", top->data);
+	printf("Top->next->data: %c\n", top->nextPtr->data);
+	printf("Top->next->next->data: %c\n", top->nextPtr->nextPtr->data);
+
+	pop(&top);
+	pop(&top);
+
+	temp = isEmpty(top);
+	printf("Two pops, temp = %d\n", temp);
+
+	pop(&top);
+
+	temp = isEmpty(top);
+	printf("Third pop, temp = %d\n", temp);
+}
