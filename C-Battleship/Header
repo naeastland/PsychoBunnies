@@ -1,0 +1,30 @@
+#ifndef BATTLESHIP_H
+#define BATTLESHIP_H
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h> // strlen(), strcpy()
+#include <time.h>
+
+#define MAX_ROWS 10
+#define MAX_COLS 10
+
+void initialize_game_board(char board[][MAX_COLS], int rows, int cols);
+void select_who_starts_first();
+void manually_place_ships_on_board();
+void randomly_place_ships_on_board();
+void check_shot();
+void is_winner();
+void update_board();
+void display_board(char board[][MAX_COLS], int rows, int cols); //we could pass in more argurements so we dont need to use four 2-D arrays....apparently
+void output_current_move();
+void check_if_sunk_ship();
+void output_stats();
+
+void my_strcpy (char *dest, char *src);
+void generate_start_pt (int direction, int length, int *row_ptr, int *col_ptr);
+int generate_dir (void);						
+void my_strcat (char *dest, char *src);
+void place_ship (char board[][MAX_COLS], int length, char symbol);
+
+#endif
