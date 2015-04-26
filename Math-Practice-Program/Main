@@ -1,0 +1,16 @@
+/******************************************************************
+Programmer: Nate Eastland
+Class: Cpts 121, Fall 2014; Lab Section 7
+Programming Assignment: PA7
+Date: 12-3-2014
+Description: This program simulates a basic math practice program.
+******************************************************************/
+#include "functions.h"
+
+
+int main()
+{
+	start();
+
+	return 1;
+}
