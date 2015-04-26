@@ -1,0 +1,54 @@
+/*************************************************************
+Programmer: Nate Eastland
+Class: Cpts 122, Spring 2015; Lab Section 6
+Programming Assignment: PA4 - Grocery Store Simulation
+Date: 2-25-2015
+Description: This program simulates a queue of customers for a 
+			normal and express checkout lane. Customers are added to 
+			the queue as time elapses and each customer's service time
+			is determined by the number of items in their cart.
+*************************************************************/
+
+#ifndef PA_4_122
+#define PA_4_122
+
+#define _CRT_SECURE_NO_WARNINGS
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+
+typedef struct cart
+{
+	char *item;
+
+	struct cart *pNext;
+} Cart;
+
+typedef struct queueNode
+{
+	int customerNumber;
+	int serviceTime;
+	int totatlTime;
+	Cart *itemList;
+
+	struct queueNode *pNext;
+} QueueNode;
+
+typedef struct queue
+{
+	QueueNode *pHead;
+	QueueNode *pTail;
+} Queue;
+
+
+QueueNode* makeNode(int customerNumber, int normOrExp, int totalTime);
+Cart *generateCart(int totalItems);
+Cart *itemGen(int itemNumber);
+void printQueue(Queue *pQ);
+void checkOut();
+void enqueue(Queue *pQ,int normOrExp, int custNum);
+void dequeue(Queue *pQ);
+
+#endif
