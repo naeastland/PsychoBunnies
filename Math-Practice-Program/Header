@@ -1,0 +1,43 @@
+/******************************************************************
+Programmer: Nate Eastland
+Class: Cpts 121, Fall 2014; Lab Section 7
+Programming Assignment: PA7
+Date: 12-3-2014
+Description: This program simulates a basic math practice program.
+******************************************************************/
+
+#ifndef PA_7
+#define PA_7
+#define _CRT_SECURE_NO_WARNINGS
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <string.h>
+#include <conio.h>
+
+#define INPUT_LEN 32
+#define NEW_SEQUENCE 1
+#define RULES 2
+#define CONTINUE 3
+#define EXIT 3
+#define SAVE_QUIT 4
+
+void start();
+void display_menu(int set);
+int input_validation(int option, int set);
+int get_option();
+void check_options(int option, int set, int *problems, int *keep_playing);
+void rules();
+int level_select();
+void run_simulator();
+void run_2(int *keep_playing, int *score);
+void level_1(int *problems, int *score, int *keep_playing);
+void level_2(int *problems, int *score, int *keep_playing);
+void level_3(int *problems, int *score, int *keep_playing);
+void level_4(int *problems, int *score, int *keep_playing);
+void level_5(int *problems, int *score, int *keep_playing);
+void read_write(FILE *input, FILE *output);
+
+
+#endif
