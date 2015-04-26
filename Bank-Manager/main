@@ -1,0 +1,235 @@
+/*************************************************************
+Programmer: Nate Eastland
+Class: Cpts 122, Spring 2015; Lab Section 6
+Programming Assignment: 
+Date: 2-8-2015
+Description: This program simulates a bank account management program.
+*************************************************************/
+
+#include "AccountList.h"
+
+int main()
+{
+	AccountList listOne;
+	Account *pCur = NULL, *pPrev = NULL;
+	int exit = 0, option = 0, tempAcct = 0, op2 = 0, op3 = 0, i = 0;
+	double tempBal = 0.0, tempDebCred = 0.0;
+	bool success = false;
+	string tempName, tempDate;
+
+	srand(time(NULL));
+
+	cout << "Welcome to the Bank Account Manager." << endl;
+
+	//this loop runs the menu and program based on the control variable 'exit'
+	while(!exit)
+	{
+		//options menu w/ input validation
+		do
+		{
+			putchar('\n');
+			cout << "Please enter the number of the option you would like." << endl;
+			cout << "1. Add account" << endl;
+			cout << "2. Delete account" << endl;
+			cout << "3. Modify an account" << endl;
+			cout << "4. Display all accounts" << endl;
+			cout << "5. Display single account" << endl;
+			cout << "6. Exit program" << endl;
+
+			cin >> option;
+
+		}while((option < 1) || (option > 6));
+
+		if(option == 6)
+		{
+			exit = 1;
+		}
+		else
+		{
+			//this section executes the option selected
+			switch(option)
+			{
+				//add an account
+				case 1:
+					cout << "Please enter a name for the account" << endl;
+					cin.ignore();
+					getline(cin, tempName);
+
+					cout << "Please enter an initial balance" << endl;
+					cin >> tempBal;
+
+					cout << "Please enter the date." << endl;
+					cin.ignore();
+					getline(cin, tempDate);
+
+					tempAcct = rand() % 999999 + 42;
+
+					success = listOne.insertOrder(tempBal, tempAcct, tempName, tempDate);
+
+					if (success == false)
+					{
+						cout << "The operation failed." << endl;
+					}
+
+					break;
+				//delete an account
+				case 2:
+
+					pCur = listOne.getPointer();
+
+					i = 1;
+
+					while(pCur)
+					{
+						cout << i << ". Account Number: " << pCur->getAcctNum() << endl;
+						cout << "Name on file: " << pCur->getCust() << endl;
+						cout << "----------------------------------------------------" << endl;
+
+						pCur = pCur->getNext();
+						i++;
+					}
+
+					do
+					{
+						cout << "Enter the number of the account you would like to delete." << endl;
+						cin.ignore();
+						cin >> op2;
+
+					}while(op2 < 1 || op2 > i);
+
+					pCur = listOne.getPointer();
+
+					for (i = 1; i < op2; i++)
+					{
+						pCur = pCur->getNext();
+					}
+					
+					success = listOne.deleteAcct(op2);
+					
+					if (success == false)
+					{
+						cout << "The operation failed." << endl;
+					}
+				
+					break;
+				//modify an account
+				case 3:
+					pCur = listOne.getPointer();
+
+					i = 1;
+
+					while(pCur)
+					{
+						cout << i << ". Account Number: " << pCur->getAcctNum() << endl;
+						cout << "Name on file: " << pCur->getCust() << endl;
+						cout << "----------------------------------------------------" << endl;
+
+						pCur = pCur->getNext();
+						i++;
+					}
+										
+					do
+					{
+						cout << "Enter the number of the account you would like to modify (1, 2, 3, etc)" << endl;
+						cin.ignore();
+						cin >> op2;
+
+					}while(op2 < 1 || op2 > i);
+
+					pCur = listOne.getPointer();
+
+					for (i = 1; i < op2; i++)
+					{
+						pCur = pCur->getNext();
+					}
+		
+					if(!pCur)
+					{
+						cout << "Sorry, account not found" << endl;
+					}
+					else
+					{
+						cout << "Would you like to:\n 1. Withdraw\n 2. Deposit" << endl;
+						cin >> op3;
+
+						if (op3 == 1)
+						{
+							cout << "How much would you like to withdraw?" << endl;
+							cin >> tempDebCred;
+							
+							listOne.debit(tempDebCred);
+						}
+						else if(op3 == 2)
+						{
+							cout << "How much would you like to Deposit?" << endl;
+							cin >> tempDebCred;
+
+							listOne.credit(tempDebCred);
+						}
+						else
+						{
+							cout << "Sorry, your entry was not understood." << endl;
+						}
+					}
+					break;
+				//display all account details
+				case 4:
+					pCur = listOne.getPointer();
+
+					listOne.printAll(pCur);
+
+					break;
+				//display a single account details
+				case 5:
+					pCur = listOne.getPointer();
+
+					i = 1;
+
+					while(pCur)
+					{
+						cout << i << ". Account Number: " << pCur->getAcctNum() << endl;
+						cout << "Name on file: " << pCur->getCust() << endl;
+						cout << "----------------------------------------------------" << endl;
+
+						pCur = pCur->getNext();
+						i++;
+					}
+					
+					pCur = listOne.getPointer();
+
+					do
+					{
+						putchar('\n');
+						cout << "Enter the number of the account you would like to view details of" << endl;
+						cin.ignore();
+						cin >> op2;
+					}while(op2 < 1 || op2 > i);
+
+					for (i = 1; i < op2; i++)
+					{
+						pCur = pCur->getNext();
+					}
+
+					listOne.printAcctInfo(pCur);
+
+					break;
+				//exit the program
+				case 6:
+					exit = 1;
+					break;
+			}
+						
+			tempAcct = 0;
+			tempBal = 0.0;
+			tempName = '\0';
+			tempDate = '\0';
+			pCur = NULL;
+			pPrev = NULL;
+			success = false;
+		}		
+	}
+
+	cout << "Thank you for using our program. Goodbye!" << endl;
+
+	return 0;
+}
