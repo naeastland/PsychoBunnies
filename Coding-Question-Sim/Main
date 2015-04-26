@@ -1,0 +1,113 @@
+/*************************************************************
+Programmer: Nate Eastland
+Class: Cpts 121, Fall 2014; Lab Section 7
+Programming Assignment: PA8
+Date: 12-12-2014
+Description: This assignment simulates solutions to seven interview questions.
+************************************************************/
+
+#include "functions.h"
+
+double main()
+{
+	char str[STR_ARR_LEN], dest[STR_ARR_LEN], source[STR_ARR_LEN] = "OMGWTFBBQ", reader = '\0', 
+		in_str[STR_ARR_LEN], *ptr_to_str[5], test[] = "It's", test2[] = "just", test3[] = "another",
+		test4[] = "love", test5[] = "song.", most_c = '\0', src3[] = "test string";
+	const char source_2[] = "roflchopter";
+	int num = -1, found_where = 0, index = 0, i = 0, len = 0, smallest = 0,
+		sorted_list[10] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, prime = 0, test6 = 0,
+		test7[] = {-15, 12, 3, -8, 3, 2, 5, -2};
+	Occurrences num_times[26];
+
+	/*
+	Here within main are commented out each of the test cases for the corresponding
+	solutions.
+	*/
+
+	//test 1
+	//one = my_str_n_cat(source, source_2, 4);
+	
+	//test 2
+	//found_where = binary_search(sorted_list, 6, 10);
+	//printf("%d\n", found_where);
+	
+	//test 3
+	//ptr_to_str[0] = test;
+	//ptr_to_str[1] = test2;
+	//ptr_to_str[2] = test3;
+	//ptr_to_str[3] = test4;
+	//ptr_to_str[4] = test5;
+
+	//bubble_sort(ptr_to_str, 5);
+
+	//test 4
+	/*
+	printf("Type in something: ");
+	fgets(in_str, 128, stdin);
+
+	len = strlen(in_str);
+
+	for(index = 0; index < len; index++)
+	{
+		//sscanf(in_str, "%c", &reader);
+
+		reader = in_str[index];
+
+		if(reader != ' ')
+		{
+			str[i] = reader;
+			i++;
+		}
+		
+		if(reader == '\n')
+		{
+			str[i] = '\0';
+		}
+	}
+	
+	num = is_palendrome(str, strlen(str));
+	printf("%d\n", num);
+	*/
+
+	//test 5
+	//prime = sum_primes(11);
+	//printf("%d\n", prime);
+
+	//test 6
+	/*
+	printf("Type in something, just lower case letters: ");
+	fgets(in_str, 128, stdin);
+
+	len = strlen(in_str);
+
+	for(index = 0; index < len; index++)
+	{
+		//sscanf(in_str, "%c", &reader);
+
+		reader = in_str[index];
+
+		if(reader != ' ')
+		{
+			str[i] = reader;
+			i++;
+		}
+		
+		if(reader == '\n')
+		{
+			str[i] = '\0';
+		}
+	}
+
+	maximum_occurences(in_str, num_times, &test6, &most_c); 
+	*/
+
+	//test 7
+	//smallest = smallest_sum_sequences(test7, 8);
+	//printf("%d\n", smallest);
+
+
+	num = -3;
+	printf("%-d\n", num);
+
+	return 9000.1;
+}
