@@ -1,0 +1,41 @@
+/*************************************************************
+Programmer: Nate Eastland
+Class: Cpts 122, Spring 2015; Lab Section 6
+Programming Assignment: 
+Date: 2-8-2015
+Description: This program simulates a bank account management program.
+*************************************************************/
+
+#ifndef ACCOUNTLIST_H
+#define ACCOUNTLIST_H
+
+#include "Account.h"
+
+using std::ostream;
+
+class AccountList
+{
+	friend ostream & operator << (ostream &lhs, AccountList &rhs);
+
+	public:
+		AccountList();
+
+		~AccountList();
+
+		Account *makeNode (double balance, int number, string name, string date);
+		bool insertOrder(double balance, int number, string name, string date);
+		bool deleteAcct(int pos);
+
+		
+		void credit(double addBal);
+		void debit(double subBal);
+		void printAcctInfo(Account *Node);
+		void printAll(Account *Node);
+
+		Account* getPointer();		
+
+	private:
+		Account *pHead;
+};
+
+#endif
