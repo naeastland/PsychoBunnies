@@ -1,0 +1,21 @@
+/*************************************************************
+Programmer: Nate Eastland
+Class: Cpts 122, Spring 2015; Lab Section 6
+Programming Assignment: PA4 - Grocery Store Simulation
+Date: 2-25-2015
+Description: This program simulates a queue of customers for a 
+			normal and express checkout lane. Customers are added to 
+			the queue as time elapses and each customer's service time
+			is determined by the number of items in their cart.
+*************************************************************/
+
+#include "functions.h"
+
+int main()
+{
+	srand((unsigned int) time (NULL));//seeds the random generator for the program
+
+	checkOut();
+
+	return 0;
+}
