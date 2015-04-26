@@ -1,0 +1,57 @@
+/*************************************************************
+Programmer: Nate Eastland
+Class: Cpts 122, Spring 2015; Lab Section 6
+Programming Assignment: 
+Date: 2-8-2015
+Description: This program simulates a bank account management program.
+*************************************************************/
+
+#ifndef ACCOUNT_H
+#define ACCOUNT_H
+
+#include <iostream>
+#include <string>
+#include <time.h>
+
+using std::cin;
+using std::cout;
+using std::endl;
+using std::getline;
+using std::string;
+using std::ostream;
+
+class AccountList;
+
+class Account
+{
+
+	friend class AccountList;
+	friend ostream & operator << (ostream &lhs, AccountList &rhs);
+
+	public:
+		Account();
+
+		Account(double newBal, int newNum, string newCust, string newDate);
+
+		Account(Account &copyObject);
+
+		double getBal() const;
+		int getAcctNum() const;
+		string getCust() const;
+		string getAcctDate() const;
+		Account *getNext() const;
+
+		void setBal(double newBal);
+		void setAcctNum(int newNum);
+		void setCustName(string newName);
+		void setAcctDate(string newDate);
+
+	private:
+		double acctBal;
+		int acctNum;
+		string custName;
+		string dateOpened;	
+		Account *mpNext;
+};
+
+#endif
