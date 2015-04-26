@@ -1,0 +1,36 @@
+/*************************************************************
+Programmer: Nate Eastland
+Class: Cpts 121, Fall 2014; Lab Section 7
+Programming Assignment: PA8
+Date: 12-12-2014
+Description: This assignment simulates solutions to seven interview questions.
+************************************************************/
+#ifndef P_A_8
+#define P_A_8
+
+#define _CRT_SECURE_NO_WARNINGS
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define STR_ARR_LEN 128
+
+char *my_str_n_cat(char *destination, const char *source, int n);
+int binary_search(int *list, int target, int len);
+void bubble_sort(char **array_pointers, int num);
+int is_palendrome(char *str, int len);
+int is_palendrome_recur(char *str, int front, int back);
+int sum_primes(unsigned int num);
+int count_primes(unsigned int num, int index);
+int is_prime(int num, int num2);
+
+typedef struct occurrences
+{
+	int num_occurrences;
+	double frequency;
+} Occurrences;
+void maximum_occurences(char *str, Occurrences *num_times, int *num, char *letter);
+int smallest_sum_sequences(int *arr, int size);
+
+#endif
