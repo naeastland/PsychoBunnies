@@ -1,0 +1,24 @@
+/*************************************************************
+Programmer: Nate Eastland
+Class: Cpts 122, Spring 2015; Lab Section 6
+Programming Assignment: 
+Date: 3-26-2015
+Description: This program is an attendance tracker for a class of students
+				whose information is stored initially in a .csv file. The user can 
+				search the list by several criteria, mark, and edit absences.
+*************************************************************/
+
+#include "AttendanceTracker.h"
+
+int main()
+{
+	menu menu;
+	List list1;
+
+	while(!menu.getQuit())
+	{
+		menu.displayMenu(list1);
+	}
+	
+	return 0;
+}
