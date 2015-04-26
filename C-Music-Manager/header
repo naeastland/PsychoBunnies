@@ -1,0 +1,75 @@
+/*************************************************************
+Programmer: Nate Eastland
+Class: Cpts 122, Spring 2015; Lab Section 6
+Programming Assignment: PA2 - Digital Music Manager
+Date: 2-9-2015
+Description: (incomplete) This program simulates the functionality
+			of a digital music managment system.
+*************************************************************/
+
+#define _CRT_SECURE_NO_WARNINGS
+
+#ifndef PA2_122_H
+#define PA2_122_H
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <conio.h>
+#include <ctype.h>
+
+#define ENTRY_SIZE 128
+#define LOAD 1
+#define STORE 2
+#define DISP 3
+#define INSERT 4
+#define DEL 5
+#define EDIT 6
+#define RATE 7
+#define EXIT 8
+
+typedef struct songLen
+{
+	int minutes;
+	int seconds;
+} SongLen;
+
+
+typedef struct record
+{
+	char *artist;
+	char* albumTitle;
+	char* songTitle;
+	char *genre;
+	SongLen *length;
+	int timesPlayed;
+	int rating;
+	struct record *pNext;
+	struct record *pPrev;
+} Record;
+
+Record *makeNode(char *artist, char *albumTitle, char* songTitle, char *genre,
+				 int minutes, int seconds, int timesPlayed, int rating);
+
+SongLen *length(int minutes, int seconds);
+
+
+void topMenu();
+void displayOptions();
+int getOption();
+void checkOptions(int option, Record **pList, int *exit);
+void loadList(Record **pList);
+void saveList(Record *pList);
+void printNode(Record *pList);
+void printRecord(Record *pList);
+void insertInList(Record **pList);
+void deleteRecord(Record **pList, char *songTitle);
+void sortList(Record **pList, char *artist, char *albumTitle, char* songTitle, char *genre,
+				 int minutes, int seconds, int timesPlayed, int rating);
+void rate(Record **pList, char *songTitle);
+void exitDMM(Record *pList, int *exit);
+Record *search(Record **pList, int criteria);
+void edit(Record **pList);
+void rate(Record **pList);
+
+#endif
