@@ -1,0 +1,18 @@
+/*************************************************************
+Programmer: Nate Eastland
+Class: Cpts 122, Spring 2015; Lab Section 6
+Programming Assignment: PA2 - Digital Music Manager
+Date: 2-9-2015
+Description: (incomplete) This program simulates the functionality
+			of a digital music managment system.
+*************************************************************/
+
+#include "functions.h"
+
+int main()
+{
+
+	topMenu();
+
+	return 0;
+}
