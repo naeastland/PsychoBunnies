@@ -1,0 +1,981 @@
+/*************************************************************
+Programmer: Nate Eastland
+Class: Cpts 122, Spring 2015; Lab Section 6
+Programming Assignment: PA2 - Digital Music Manager
+Date: 2-9-2015
+Description: This program simulates the functionality
+			of a digital music managment system.
+*************************************************************/
+
+#include "functions.h"
+
+/*******************************************************
+  Function: makeNode()                   
+  Date Created: 2-9-2015                                            
+  Date Last Modified: 2-9-2015                                      
+  Description: This function creates a node of the type Record *, which
+				contains the various record fields to be stored.
+  Input parameters: char *artist, char *albumTitle, char* songTitle, char *genre,
+				 int minutes, int seconds, int timesPlayed, int rating                                   
+  Returns: Record* address to the node created by the function.                                         
+********************************************************/  
+
+Record *makeNode(char *artist, char *albumTitle, char* songTitle, char *genre,
+				 int minutes, int seconds, int timesPlayed, int rating)
+{
+	Record *pMem = NULL;
+	SongLen * len = NULL;
+
+	pMem = (Record *)malloc(sizeof(Record));
+	len = (SongLen *)malloc(sizeof(SongLen));
+
+	if(pMem != NULL)
+	{
+		pMem->artist = (char *)malloc(sizeof(char) * (strlen(artist) + 1));
+		strcpy(pMem->artist, artist);
+
+		pMem->albumTitle = (char *)malloc(sizeof(char) * (strlen(albumTitle) + 1));
+		strcpy(pMem->albumTitle, albumTitle);
+
+		pMem->songTitle = (char *)malloc(sizeof(char) * (strlen(songTitle) + 1));
+		strcpy(pMem->songTitle, songTitle);
+
+		pMem->genre = (char *)malloc(sizeof(char) * (strlen(genre) + 1));
+		strcpy(pMem->genre, genre);
+
+		len = length(minutes, seconds);
+
+		pMem->length = len;
+		pMem->timesPlayed = timesPlayed;
+		pMem->rating = rating;
+
+		pMem->pNext = NULL;
+		pMem->pPrev = NULL;
+	}
+
+	return pMem;
+}
+
+/*******************************************************
+  Function: length()                   
+  Date Created: 2-9-2015                                            
+  Date Last Modified: 2-9-2015                                      
+  Description:  Creates a type SongLen* node. This node type is made
+				as a holder for minutes and seconds data for a record.
+  Input parameters: int minutes, int seconds                                   
+  Returns: SongLen*, address to the node created by the function.                                         
+********************************************************/   
+
+SongLen *length(int minutes, int seconds)
+{
+	SongLen *len = NULL;
+
+	len = (SongLen *)malloc(sizeof(SongLen));
+
+	len->minutes = minutes;
+
+	len->seconds = seconds;
+
+	return len;
+}
+
+/*******************************************************
+  Function: topMenu()                   
+  Date Created: 2-9-2015                                            
+  Date Last Modified: 2-9-2015                                      
+  Description: This menu contains a while loop from which the 
+				DMM is operated through. Upon exiting the loop
+				the function calls a print function to print the 
+				current list to file.
+  Input parameters: None                                  
+  Returns: Nothing                                         
+********************************************************/ 
+
+void topMenu()
+{
+	int option = 0, exit = 0;
+	Record *pHead = NULL;
+	
+	printf("Welcome to your Digital Music Manager.\n");
+
+	do
+	{
+		displayOptions();
+		option = getOption();
+		checkOptions(option, &pHead, &exit);
+
+		system("cls");
+	}while(!exit);	
+	
+	printNode(pHead);
+}
+
+/*******************************************************
+  Function: getOption()                   
+  Date Created: 2-9-2015                                            
+  Date Last Modified: 2-9-2015                                      
+  Description: This function reads in an option entered by the user.                                  
+  Input parameters: None                                  
+  Returns: int option, the option entered by the user.                                         
+********************************************************/ 
+
+int getOption()
+{
+	char entry[ENTRY_SIZE];
+	int option = 0, index = 0;
+
+	fgets (entry, ENTRY_SIZE, stdin);	
+
+	//currently still looks for whitespace as an entry
+	if(isdigit(entry[0]))
+	{
+		option = entry[0] - 48;
+	}
+
+	return option;
+}
+
+/*******************************************************
+  Function: displayOptions()                   
+  Date Created: 2-9-2015                                            
+  Date Last Modified: 2-9-2015                                      
+  Description: This function prints out the menu of possible options
+				for the user to choose from.
+  Input parameters: None                                   
+  Returns: Nothing                                          
+********************************************************/ 
+
+void displayOptions()
+{
+	printf("Please select an option by entering the number of the option below.\n");
+	putchar('\n');
+
+	printf("1. Load Previous List\n");
+	printf("2. Store Current List\n");
+	printf("3. Display a Record\n");
+	printf("4. Insert a New Record\n");
+	printf("5. Delete a Record\n");
+	printf("6. Edit an Entry\n");
+	printf("7. Rate a Song\n");
+	printf("8. Exit Music Manager\n");
+}
+
+/*******************************************************
+  Function: checkOptions                    
+  Date Created: 2-9-2015                                            
+  Date Last Modified: 2-9-2015                                      
+  Description: This function is a switch statement which sends the 
+				user to the appropriate function selected. Depending on
+				the desired action, some options simply call a function 
+				while others prompt for more input prior to executing the
+				following function.
+  Input parameters: int option, Record **pList, int *exit 
+					Option selected by the user, the head of the linked list, and
+					the control variable "exit".
+  Returns: Nothing                                         
+********************************************************/ 
+
+void checkOptions(int option, Record **pList, int *exit)
+{
+	int s = 0, sO = 0;
+	char songTemp[ENTRY_SIZE];
+	Record *temp = NULL;
+
+	switch (option)
+	{
+		case LOAD: loadList(pList);
+			break;
+		case STORE: saveList(*pList);
+			break;
+		case DISP:	printf("Enter the number of the display option you would like.\n");
+					printf("0. Display All Records\n");
+					printf("1. Artist\n");
+					printf("2. Album Title\n");
+					printf("3. Song Title\n");
+					printf("4. Genre\n");
+					printf("5. Song Length\n");
+					printf("6. Times Played\n");
+					printf("7. Rating\n");
+
+					scanf("%d", &s);
+
+					if(!s)
+					{
+						printNode(*pList);
+					}
+					else
+					{
+						temp = search(pList, s);
+						printRecord(temp);
+					}
+			break;
+		case INSERT: insertInList(pList);
+			break;
+		case DEL:	printf("Enter the song name you wish to delete from the list.\n");
+					fgets(songTemp, ENTRY_SIZE, stdin);
+
+					deleteRecord(pList, songTemp);
+			break;
+		case EDIT:	printf("Enter the number of the option you would like to search records by.\n");
+					printf("1. Artist\n");
+					printf("2. Album Title\n");
+					printf("3. Song Title\n");
+					printf("4. Genre\n");
+					printf("5. Song Length\n");
+					printf("6. Times Played\n");
+					printf("7. Rating\n");
+
+					scanf("%d", &s);
+
+					temp = search(pList, s);
+					edit(&temp);
+			break;
+		case RATE:	printf("Enter the number of the option you would like to search records by.\n");
+					printf("1. Artist\n");
+					printf("2. Album Title\n");
+					printf("3. Song Title\n");
+					printf("4. Genre\n");
+					printf("5. Song Length\n");
+					printf("6. Times Played\n");
+					printf("7. Rating\n");
+
+					scanf("%d", &s);
+
+					temp = search(pList, s);
+					rate(&temp);
+			break;
+		case EXIT: exitDMM(*pList, exit);
+			break;
+		default:
+			break;
+	}
+}
+
+/*******************************************************
+  Function: search()                   
+  Date Created: 2-9-2015                                            
+  Date Last Modified: 2-9-2015                                      
+  Description: This function searches through the list for a specific input
+				entered by the user, dependant upon the selection criteria input
+				prior to entering this function. 
+  Input parameters: Record **pList, int criteria 
+					The head of the linked list and the selection criteria.
+  Returns: Record* pCur. The address of the node found that matches the user's
+			input.
+********************************************************/ 
+
+Record *search(Record **pList, int criteria)
+{
+	Record *pCur = NULL;
+	char eTemp[ENTRY_SIZE];
+	int num = 0;
+
+	pCur = *pList;
+
+	if(criteria == 1)
+	{
+		fflush(stdin);
+		printf("Enter the artist name:\n");
+		fgets(eTemp, ENTRY_SIZE, stdin);
+
+		while((pCur != NULL) && (strcmp(pCur->artist, eTemp) != 0))
+		{
+			pCur = pCur->pNext;
+		}
+
+		if(pCur == NULL)
+		{
+			printf("Artist not found.\n");
+		}
+		else
+		{
+			return pCur;
+		}
+	}
+	else if(criteria == 2)
+	{
+		fflush(stdin);
+		printf("Enter the album name:\n");
+		fgets(eTemp, ENTRY_SIZE, stdin);
+
+		while((pCur != NULL) && (strcmp(pCur->albumTitle, eTemp) != 0))
+		{
+			pCur = pCur->pNext;
+		}
+
+		if(pCur == NULL)
+		{
+			printf("Album not found.\n");
+		}
+		else
+		{
+			return pCur;
+		}
+	}
+	else if(criteria == 3)
+	{
+		fflush(stdin);
+		printf("Enter the song name:\n");
+		fgets(eTemp, ENTRY_SIZE, stdin);
+
+		while((pCur != NULL) && (strcmp(pCur->songTitle, eTemp) != 0))
+		{
+			pCur = pCur->pNext;
+		}
+
+		if(pCur == NULL)
+		{
+			printf("Song not found.\n");
+		}
+		else
+		{
+			return pCur;
+		}
+	}
+	else if(criteria == 4)
+	{
+		fflush(stdin);
+		printf("Enter the genre:\n");
+		fgets(eTemp, ENTRY_SIZE, stdin);
+
+		while((pCur != NULL) && (strcmp(pCur->genre, eTemp) != 0))
+		{
+			pCur = pCur->pNext;
+		}
+
+		if(pCur == NULL)
+		{
+			printf("Genre not found.\n");
+		}
+		else
+		{
+			return pCur;
+		}
+	}
+	else if(criteria == 5)
+	{
+		fflush(stdin);
+		printf("Enter the song length in minutes:\n");
+		scanf("%d", &num);
+
+		while((pCur != NULL) && (pCur->length->minutes != num))
+		{
+			pCur = pCur->pNext;
+		}
+
+		if(pCur == NULL)
+		{
+			printf("Entry not found.\n");
+		}
+		else
+		{
+			return pCur;
+		}
+	}
+	else if(criteria == 6)
+	{
+		fflush(stdin);
+		printf("Enter the times played:\n");
+		scanf("%d", &num);
+
+		while((pCur != NULL) && (pCur->timesPlayed != num))
+		{
+			pCur = pCur->pNext;
+		}
+
+		if(pCur == NULL)
+		{
+			printf("Entry not found.\n");
+		}
+		else
+		{
+			return pCur;
+		}
+	}
+	else if(criteria == 7)
+	{
+		fflush(stdin);
+		printf("Enter the rating:\n");
+		scanf("%d", &num);
+
+		while((pCur != NULL) && (pCur->rating != num))
+		{
+			pCur = pCur->pNext;
+		}
+
+		if(pCur == NULL)
+		{
+			printf("Entry not found.\n");
+		}
+		else
+		{
+			return pCur;
+		}
+	}
+	else
+	{
+		printf("Invalid entry.\n");
+	}
+
+	return pCur;
+}
+
+/*******************************************************
+  Function: edit()                   
+  Date Created: 2-9-2015                                            
+  Date Last Modified: 2-9-2015                                      
+  Description: This function edits a field selected by the user, from a 
+				node identified by the user prior to this function call.
+  Input parameters: Record **pList, the specific address of the node to be modified.                                    
+  Returns: Nothing.                                         
+********************************************************/ 
+
+void edit(Record **pList)
+{
+	Record *pCur = NULL;
+	char eTemp[ENTRY_SIZE];
+	int num = 0, num2 = 0, option = 0;
+
+	pCur = *pList;
+
+	printf("Enter the number for the field you would like to edit.\n");
+	printf("1. Artist\n");
+	printf("2. Album Title\n");
+	printf("3. Song Title\n");
+	printf("4. Genre\n");
+	printf("5. Song Length\n");
+	printf("6. Times Played\n");
+	printf("7. Rating\n");
+	scanf("%d", &option);
+
+	if(option == 1)
+	{
+		fflush(stdin);
+		printf("Enter the artist name:\n");
+		fgets(eTemp, ENTRY_SIZE, stdin);
+
+		if(pCur->artist == NULL)
+		{
+			printf("Artist not found.\n");
+		}
+		else
+		{
+			free(pCur->artist);
+			pCur->artist = (char*)malloc(sizeof(char) * (strlen(eTemp) + 1));
+			strcpy(pCur->artist, eTemp);
+		}
+	}
+	else if(option == 2)
+	{
+		fflush(stdin);
+		printf("Enter the album name:\n");
+		fgets(eTemp, ENTRY_SIZE, stdin);
+
+		if(pCur->albumTitle == NULL)
+		{
+			printf("Album not found.\n");
+		}
+		else
+		{
+			free(pCur->albumTitle);
+			pCur->albumTitle = (char*)malloc(sizeof(char) * (strlen(eTemp) + 1));
+			strcpy(pCur->albumTitle, eTemp);
+		}
+	}
+	else if(option == 3)
+	{
+		fflush(stdin);
+		printf("Enter the song name:\n");
+		fgets(eTemp, ENTRY_SIZE, stdin);
+
+		if(pCur->songTitle == NULL)
+		{
+			printf("Song not found.\n");
+		}
+		else
+		{
+			free(pCur->songTitle);
+			pCur->songTitle = (char*)malloc(sizeof(char) * (strlen(eTemp) + 1));
+			strcpy(pCur->songTitle, eTemp);
+		}
+	}
+	else if(option == 4)
+	{
+		fflush(stdin);
+		printf("Enter the genre:\n");
+		fgets(eTemp, ENTRY_SIZE, stdin);
+
+		if(pCur->genre == NULL)
+		{
+			printf("Genre not found.\n");
+		}
+		else
+		{
+			free(pCur->genre);
+			pCur->genre = (char*)malloc(sizeof(char) * (strlen(eTemp) + 1));
+			strcpy(pCur->genre, eTemp);
+		}
+	}
+	else if(option == 5)
+	{
+		fflush(stdin);
+		printf("Enter the song length in minutes:\n");
+		scanf("%d", &num);
+
+		printf("Enter the seconds.\n");
+		scanf("%d", &num2);
+
+		if(pCur->length == NULL)
+		{
+			printf("Entry not found.\n");
+		}
+		else
+		{
+			pCur->length->minutes = num;
+			pCur->length->seconds = num2;
+		}
+	}
+	else if(option == 6)
+	{
+		fflush(stdin);
+		printf("Enter the times played:\n");
+		scanf("%d", &num);
+
+		if(pCur->timesPlayed == NULL)
+		{
+			printf("Entry not found.\n");
+		}
+		else
+		{
+			pCur->timesPlayed = num;
+		}
+	}
+	else if(option == 7)
+	{
+		fflush(stdin);
+		printf("Enter the rating:\n");
+		scanf("%d", &num);
+
+		if(pCur->rating == NULL)
+		{
+			printf("Entry not found.\n");
+		}
+		else
+		{
+			pCur->rating = num;
+		}
+	}
+	else
+	{
+		printf("Invalid entry.\n");
+	}
+}
+
+/*******************************************************
+  Function: rate()                    
+  Date Created: 2-9-2015                                            
+  Date Last Modified: 2-9-2015                                      
+  Description: This function is essentially a specific version of edit,
+				with the same functionallity. Specific node passed in, new
+				rating is asked for, then existing rating is modified.
+  Input parameters: Record **pList - specific node to have rating edited                                   
+  Returns: Nothing.                                         
+********************************************************/ 
+
+void rate(Record **pList)
+{
+	int num = 0;
+	Record *pCur = NULL;
+
+	pCur = *pList;
+
+	fflush(stdin);
+	printf("Enter the rating:\n");
+	scanf("%d", &num);
+
+	if(pCur->rating == NULL)
+	{
+		printf("Entry not found.\n");
+	}
+	else
+	{
+		pCur->rating = num;
+	}
+}
+
+/*******************************************************
+  Function: loadList()                   
+  Date Created: 2-9-2015                                            
+  Date Last Modified: 2-9-2015                                      
+  Description: This function creates a linked list from data provided
+				by an input file.
+  Input parameters: Record **pList, the head of list to load entries into.                                   
+  Returns: Nothing                                         
+********************************************************/ 
+
+void loadList(Record **pList)
+{
+	char tempArtist[ENTRY_SIZE], tempAlbum[ENTRY_SIZE], tempSong[ENTRY_SIZE], tempGenre[ENTRY_SIZE], buffer[ENTRY_SIZE];
+	int tempMin = 0, tempSec = 0, tempPlayed = 0, tempRating = 0;
+	FILE *input = NULL;
+	Record *pMem = NULL;
+	
+	input = fopen("list.dat", "r");
+
+	if(*pList == NULL)
+	{
+		while(!feof(input))
+		{
+			fgets(buffer, ENTRY_SIZE, input);
+			fgets(tempArtist, ENTRY_SIZE, input);
+			fgets(tempAlbum, ENTRY_SIZE, input);
+			fgets(tempSong, ENTRY_SIZE, input);
+			fgets(tempGenre, ENTRY_SIZE, input);
+			fscanf(input, "%d", &tempMin);
+			fscanf(input, "%d", &tempSec);
+			fscanf(input, "%d", &tempPlayed);
+			fscanf(input, "%d", &tempRating);
+
+			sortList(pList, tempArtist, tempAlbum, tempSong, tempGenre, tempMin, tempSec, tempPlayed, tempRating);
+		}
+	}
+	
+	fclose(input);
+}
+
+/*******************************************************
+  Function: insertInList()                   
+  Date Created: 2-9-2015                                            
+  Date Last Modified: 2-9-2015                                      
+  Description: This function prompts the user for data to enter into 
+				the various record fields of a new record to be inserted
+				in the list. The function calls a specialized sorting
+				function that inserts the new node data in order.
+  Input parameters: Record **pList, the head of the list to be inserted into.                                   
+  Returns: Nothing                                         
+********************************************************/ 
+
+void insertInList(Record **pList)
+{
+	char tempArtist[ENTRY_SIZE], tempAlbum[ENTRY_SIZE], tempSong[ENTRY_SIZE], tempGenre[ENTRY_SIZE];
+	int tempMin = 0, tempSec = 0, tempPlayed = 0, tempRating = 0;
+	
+	printf("Please enter the required fields for your new record.\n");
+
+	printf("Artist Name: ");
+	fgets(tempArtist, ENTRY_SIZE, stdin);
+	putchar('\n');
+
+	printf("Album Name: ");
+	fgets(tempAlbum, ENTRY_SIZE, stdin);
+	putchar('\n');
+
+	printf("Song Name: ");
+	fgets(tempSong, ENTRY_SIZE, stdin);
+	putchar('\n');
+
+	printf("Genre: ");
+	fgets(tempGenre, ENTRY_SIZE, stdin);
+	putchar('\n');
+
+	printf("Song Length minutes (ex. 4:06 song length, enter '4' for minutes): ");
+	scanf(" %d", &tempMin);
+	putchar('\n');
+
+	printf("Song Length seconds (ex. 4:06 song length, enter '06' for seconds): ");
+	scanf(" %d", &tempSec);
+	putchar('\n');
+
+	printf("Times Played: ");
+	scanf(" %d", &tempPlayed);
+	putchar('\n');
+
+	printf("Rating: ");
+	scanf(" %d", &tempRating);
+	putchar('\n');
+
+	sortList(pList, tempArtist, tempAlbum, tempSong, tempGenre, tempMin, tempSec, tempPlayed, tempRating);
+}
+
+/*******************************************************
+  Function: sortList()                   
+  Date Created: 2-9-2015                                            
+  Date Last Modified: 2-9-2015                                      
+  Description: This function takes in the various data fields for a new record,
+				creates a new node based on that data, then inserts it in the 
+				correct position in the existing list.
+  Input parameters: Record **pList, char *artist, char *albumTitle, char* songTitle, char *genre,
+				 int minutes, int seconds, int timesPlayed, int rating                                   
+  Returns: Nothing                                         
+********************************************************/ 
+
+void sortList(Record **pList, char *artist, char *albumTitle, char* songTitle, char *genre,
+				 int minutes, int seconds, int timesPlayed, int rating)
+{
+	Record *pMem = NULL, *pLast = NULL, *pCur = NULL;
+	
+	pMem = makeNode(artist, albumTitle, songTitle, genre, minutes, seconds, timesPlayed, rating);
+
+	if(*pList == NULL)
+	{
+		*pList = pMem;
+	}
+	else
+	{
+		pCur = *pList;
+		
+		while ((pCur != NULL) && (strcmp(pCur->artist,pMem->artist) < 0))
+		{
+			pLast = pCur;
+			pCur = pCur->pNext;
+		}
+
+		if(pLast != NULL)
+		{
+			pMem->pNext = pCur;
+			pMem->pPrev = pLast;
+			pLast->pNext = pMem;
+		}
+		else //pLast == NULL
+		{
+			pMem->pNext = pCur;
+			pCur->pPrev = pMem;
+			*pList = pMem;
+		}
+	}
+}
+
+/*******************************************************
+  Function: deleteRecord()                   
+  Date Created: 2-9-2015                                            
+  Date Last Modified: 2-9-2015                                      
+  Description: This function deletes a node from the list based
+				on the song searched for by the user.
+  Input parameters: Record **pList, char *songTitle 
+					Head of the list and the song to be deleted.
+  Returns: Nothing                                         
+********************************************************/ 
+
+void deleteRecord(Record **pList, char *songTitle)
+{
+	Record *pMem = NULL, *pCur = NULL, *pLast = NULL;
+
+	pCur = *pList;
+
+	if(pCur == NULL)
+	{
+		printf("Entry not found. List empty.");
+	}
+	else
+	{
+		while((pCur != NULL) && (strcmp(pCur->songTitle, songTitle) != 0))
+		{
+			pLast = pCur;
+			pCur = pCur->pNext;
+		}
+
+		if(pCur == NULL)
+		{
+			printf("The song was not found.");
+		}
+		else
+		{
+			if(pCur->pPrev == NULL)
+			{
+				if(pCur->pNext == NULL)
+				{
+					free(pCur->artist);
+					free(pCur->albumTitle);
+					free(pCur->songTitle);
+					free(pCur->genre);
+					free(pCur->length);
+					free(pCur);
+
+					*pList = NULL;
+				}
+				else
+				{
+					pMem = pCur->pNext;
+					pMem->pPrev = NULL;
+					*pList = pMem;
+
+					free(pCur->artist);
+					free(pCur->albumTitle);
+					free(pCur->songTitle);
+					free(pCur->genre);
+					free(pCur->length);
+					free(pCur);
+				}					
+			}
+			else if(pCur->pNext == NULL)
+			{
+				pLast->pNext = NULL;
+
+				free(pCur->artist);
+				free(pCur->albumTitle);
+				free(pCur->songTitle);
+				free(pCur->genre);
+				free(pCur->length);
+				free(pCur);
+			}
+			else
+			{
+				pMem = pCur->pNext;
+				pLast->pNext = pMem;
+				pMem->pPrev = pLast;
+
+				free(pCur->artist);
+				free(pCur->albumTitle);
+				free(pCur->songTitle);
+				free(pCur->genre);
+				free(pCur->length);
+				free(pCur);
+			}
+		}
+	}
+}
+
+/*******************************************************
+  Function: printRecord()                   
+  Date Created: 2-9-2015                                            
+  Date Last Modified: 2-9-2015                                      
+  Description: This function prints the data contained in a single record node.
+  Input parameters: Record *pList, the single node to be printed.                                   
+  Returns: Nothing                                         
+********************************************************/ 
+
+void printRecord(Record *pList)
+{
+	if(pList != NULL)
+	{
+		printf("->\n");
+
+		printf("-> %s \n", pList->artist);
+		printf("-> %s \n", pList->albumTitle);
+		printf("-> %s \n", pList->songTitle);
+		printf("-> %s \n", pList->genre);
+		printf("-> %d: %d \n", pList->length->minutes, pList->length->seconds);
+		printf("-> Times Played: %d \n", pList->timesPlayed);
+		printf("-> Rating: %d \n", pList->rating);
+
+		putchar('\n');
+	}
+	else
+	{
+		printf("Invalid entry.\n");
+	}
+
+	printf("Press any key to continue.\n");
+	getch();
+}
+
+/*******************************************************
+  Function: printNode()                   
+  Date Created: 2-9-2015                                            
+  Date Last Modified: 2-9-2015                                      
+  Description: If the list is not empty, this function prints data
+				from all nodes in the list.
+  Input parameters: Record *pList, the head of the list.                                   
+  Returns: Nothing                                         
+********************************************************/ 
+
+void printNode(Record *pList)
+{
+	if(pList != NULL)
+	{
+		while(pList != NULL)
+		{
+			printf("->\n");
+
+			printf("-> %s \n", pList->artist);
+			printf("-> %s \n", pList->albumTitle);
+			printf("-> %s \n", pList->songTitle);
+			printf("-> %s \n", pList->genre);
+			printf("-> %d: %d \n", pList->length->minutes, pList->length->seconds);
+			printf("-> Times Played: %d \n", pList->timesPlayed);
+			printf("-> Rating: %d \n", pList->rating);
+
+			putchar('\n');
+
+			pList = pList->pNext;
+		}
+	}
+	else
+	{
+		printf("Invalid entry.\n");
+	}
+
+	printf("Press any key to continue\n");
+	getch();
+}
+
+/*******************************************************
+  Function: exitDMM()                   
+  Date Created: 2-9-2015                                            
+  Date Last Modified: 2-9-2015                                      
+  Description: If the list is not empty, this function traverses
+				the list, prints the records to a file, and modifies
+				the control value "exit" for the program.
+  Input parameters: Record *pList, int *exit 
+					The head of the list to be saved, the program control variable.
+  Returns: Nothing                                        
+********************************************************/ 
+
+void exitDMM(Record *pList, int *exit)
+{
+	FILE *output = NULL;
+
+	output = fopen("list.dat", "w");	
+
+	while(pList != NULL)
+	{
+		fprintf(output, "\n");
+		fprintf(output, "%s", pList->artist);
+		fprintf(output, "%s", pList->albumTitle);
+		fprintf(output, "%s", pList->songTitle);
+		fprintf(output, "%s", pList->genre);
+		fprintf(output, "%d\n", pList->length->minutes);
+		fprintf(output, "%d\n", pList->length->seconds);
+		fprintf(output, "%d\n", pList->timesPlayed);
+		fprintf(output, "%d", pList->rating);
+
+		pList = pList->pNext;
+	}
+	
+	fclose(output);
+	*exit = 1;
+}
+
+/*******************************************************
+  Function: saveList()                   
+  Date Created: 2-9-2015                                            
+  Date Last Modified: 2-9-2015                                      
+  Description: This function saves the records in the current list 
+				to a file, without exiting the program.
+  Input parameters: Record *pList, the head of the current linked list.                                   
+  Returns: Nothing.                                         
+********************************************************/ 
+
+void saveList(Record *pList)
+{
+	FILE *output = NULL;
+
+	output = fopen("list.dat", "w");	
+
+	while(pList != NULL)
+	{
+		fprintf(output, "\n");
+		fprintf(output, "%s", pList->artist);
+		fprintf(output, "%s", pList->albumTitle);
+		fprintf(output, "%s", pList->songTitle);
+		fprintf(output, "%s", pList->genre);
+		fprintf(output, "%d\n", pList->length->minutes);
+		fprintf(output, "%d\n", pList->length->seconds);
+		fprintf(output, "%d\n", pList->timesPlayed);
+		fprintf(output, "%d", pList->rating);
+
+		pList = pList->pNext;
+	}
+
+	fclose(output);
+}
