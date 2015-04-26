@@ -1,0 +1,349 @@
+/*************************************************************
+Programmer: Nate Eastland
+Class: Cpts 121, Fall 2014; Lab Section 7
+Programming Assignment: PA8
+Date: 12-12-2014
+Description: This assignment simulates solutions to seven interview questions.
+************************************************************/
+
+#include "functions.h"
+
+/*******************************************************
+  Function:  *my_str_n_cat()                  
+  Date Created: 12-12-2014                                            
+  Date Last Modified: 12-12-2014                                      
+  Description: This funcion concatenates n number of characters from 
+				a source string to the end of a destination string
+  Input parameters:  char *destination, const char *source, int n                                   
+  Returns: pointer to destination string                                         
+********************************************************/
+
+char *my_str_n_cat(char *destination, const char *source, int n)
+{
+	int length, index;
+
+	for(length = 0; destination[length] != '\0'; length++);
+
+	for(index = 0; (source[index] != '\0') && (index < n); index++)
+	{
+		destination[length + index] = source[index];
+	}
+
+	destination[length + index] = '\0';
+
+	return destination;	
+}
+
+/*******************************************************
+  Function: inary_search()                   
+  Date Created: 12-12-2014                                            
+  Date Last Modified: 12-12-2014                                       
+  Description: This funciton executes a binary search algorithm.                                   
+  Input parameters: int *list, int target, int len                                   
+  Returns: targetindex, the index location of the target integer.                                         
+********************************************************/
+
+int binary_search(int *list, int target, int len)
+{
+	int found = 0, left = 1, right = 0, mid = 0, targetindex = -1;
+
+	right = len;
+
+	while (!found && (left <= right))
+	{
+		mid = (right + left)/2;
+		
+		if(target == (list[mid]))
+		{
+			targetindex = mid;
+			found = 1;
+		}
+		else if(target < (list[mid]))
+		{
+			right = mid - 1;
+		}
+		else
+		{
+			left = mid + 1;
+		}
+	}
+	
+	return targetindex;
+}
+
+/*******************************************************
+  Function: bubble_sort()                   
+  Date Created: 12-12-2014                                            
+  Date Last Modified: 12-12-2014                                      
+  Description: This function performs the bubble sort sorthin algorithm
+				on a two dimensional array of chars (array of pointers to strings).
+  Input parameters: char **array_pointers, int num                                    
+  Returns: nothing                                         
+********************************************************/
+
+void bubble_sort(char **array_pointers, int num)
+{
+	int index = 0, passes = 0, U = 0, C = 1, i;
+	char *temp[STR_ARR_LEN];
+
+	U = num;
+
+	for (passes = 0; passes < U; passes++)
+	{
+		for (C = 1; C < (U - passes); C++)
+		{
+			if (strcmp(array_pointers[C], array_pointers[C - 1]) < 0/*array_pointers[C] < array_pointers[C - 1]*/)
+			{
+				*temp = array_pointers[C];
+				array_pointers[C] = array_pointers[C - 1];
+				array_pointers[C - 1] = *temp;
+			}
+		}
+	}
+
+	for (i = 0; i < num; i++)
+	{
+		printf("%s\n", array_pointers[i]);
+	}
+}
+
+/*******************************************************
+  Function: is_palendrome()                   
+  Date Created: 12-12-2014                                            
+  Date Last Modified: 12-12-2014                                      
+  Description: This function determines if a string passed in to it 
+				is a palendrome or not.
+  Input parameters: char *str, int len                                   
+  Returns: int result, either a '1' if str is a palendrome, '0' if not.                                         
+********************************************************/
+
+int is_palendrome(char *str, int len)
+{
+	int front = 0 ,back = 0, result = -1;
+
+	back = len - 2;
+
+	result = is_palendrome_recur(str, front, back);
+	
+	return result;
+}
+
+/*******************************************************
+  Function: is_palendrome_recur()                   
+  Date Created: 12-12-2014                                            
+  Date Last Modified: 12-12-2014                                      
+  Description: This funciton is the recursive step in determining whether
+				the string passed to it is a palendrome.
+  Input parameters: char *str, int front, int back                                   
+  Returns: an integer, 1 or 0, if the string is determined to be a palendrome or not.                                         
+********************************************************/
+
+int is_palendrome_recur(char *str, int front, int back)
+{
+	if(front < back)
+	{
+		if(str[front] == str[back])
+		{
+			front = front + 1;
+			back = back - 1;
+
+			return is_palendrome_recur(str, front, back);
+		}
+		else
+		{
+			return 0;
+		}
+	}
+
+	return 1;
+}
+
+/*******************************************************
+  Function:  sum_primes()                  
+  Date Created:12-12-2014                                             
+  Date Last Modified: 12-12-2014                                      
+  Description: This function sums all prime numbers up to and including the
+				number passed into it, if it is prime.
+  Input parameters: unsigned int num                                   
+  Returns: int sum, the sum of primes produced from the recursive step function.                                     
+********************************************************/
+
+int sum_primes(unsigned int num)
+{
+	int sum = 0, index = 0, is_p = 0;
+
+	index = num;
+	is_p = is_prime(num, num/2);
+
+	if(is_p)
+	{
+		return sum = num + count_primes(num, index);;
+	}
+	else
+	{
+		return sum = count_primes(num, index);
+	}
+}
+
+/*******************************************************
+  Function: count_primes()                   
+  Date Created: 12-12-2014                                            
+  Date Last Modified: 12-12-2014                                      
+  Description: This function is the recursive step in determining the sum total
+				of prime numbers up to the number passed into the function.
+  Input parameters: unsigned int num, int index                                   
+  Returns: int sum                                         
+********************************************************/
+
+int count_primes(unsigned int num, int index)
+{
+	int i, sum = 0, is_prime = -1;
+
+	for (i = 2; i < index; i++)
+	{
+		if(index % i == 0)
+		{
+			is_prime = 0;
+		}
+	}
+
+	if(index == 2)
+	{
+		return;
+	}
+	else if(is_prime && (index != num))
+	{
+		return sum = index + count_primes(num, index - 1);
+	}
+	else
+	{
+		return sum = count_primes(num, index - 1);
+	}
+}
+
+/*******************************************************
+  Function: int is_prime()                   
+  Date Created: 12-12-2014                                            
+  Date Last Modified: 12-12-2014                                      
+  Description: This function determines if the number input in to sum_primes function
+				is a prime number so that it may be added to the total sum if so.
+  Input parameters: int num, int num2                                    
+  Returns: returns '1' if int num is determined to be prime, '0' otherwise.                                          
+********************************************************/
+
+int is_prime(int num, int num2)
+{
+	if(num2 == 1)
+	{
+		return 1;
+	}
+	else
+	{
+		if(num % num2 == 0)
+		{
+			return 0;
+		}
+		else
+		{
+			is_prime(num, num2 - 1);
+		}
+	}
+}
+
+/*******************************************************
+  Function: maximum_occurences()                   
+  Date Created: 12-12-2014                                            
+  Date Last Modified: 12-12-2014                                      
+  Description: This function determines the maximum number of occurences of a letter
+				within a given string. The letter that has the maximum number of occurrences
+				within the string and that number of occurrences are returned through output
+				parameters.
+  Input parameters: char *str, Occurrences *num_times, int *num, char *letter                                   
+  Returns: nothing                                        
+********************************************************/
+
+void maximum_occurences(char *str, Occurrences *num_times, int *num, char *letter)
+{
+	char temp = '\0', comp = 'a';
+	int i, j, len = 0, temp_num = 0, max = 0;
+
+	len = strlen(str);
+
+	for(i = 0; i < 26; i++)
+	{
+		num_times[i].num_occurrences = 0;
+		num_times[i].frequency = 0.0;
+	}
+
+	for(i = 0; i < len; i++)
+	{
+		for(comp = 'a'; comp <= 'z';comp++)
+		{
+			if(comp == str[i])
+			{	
+				num_times[(comp - 97)].num_occurrences++;
+				num_times[(comp - 97)].frequency = (num_times[(comp - 97)].num_occurrences)/len;
+			}
+		}
+	}
+
+	for(i = 0; i < 26; i++)
+	{
+		if(num_times[i].num_occurrences > temp_num)
+		{
+			temp_num = num_times[i].num_occurrences;
+			max = i + 97;			
+		}
+	}
+
+	printf("The most frequent character is: %c\n", max);
+	printf("Occured %d times.\n", temp_num);
+}
+
+/*******************************************************
+  Function: smallest_sum_sequences()                   
+  Date Created: 12-12-2014                                            
+  Date Last Modified: 12-12-2014                                       
+  Description: This function determines the smallest sum of subsequences within a given
+				array of characters (the sum, or individual integer closest to 0).
+  Input parameters: int *arr, int size                                   
+  Returns: int min, the sum or individual integer closest to 0.                                         
+********************************************************/
+
+int smallest_sum_sequences(int *arr, int size)
+{
+	int check = 0, min = 0, i, j, k, sub[100];
+
+	min = arr[0];
+
+	for (i = 1; i < size; i++)
+	{
+		if(arr[i] == 0)
+		{
+			return min = arr[i];
+		}
+	}
+
+	for(i = 0; i < size; i++)
+	{
+		for(j = i; j < size; j++)
+		{
+			for(k = i, check = 0; k <= j; check += arr[k], k++);
+
+			if((check < min) && (check > 0))
+			{
+				min = check;
+			}
+			else if ((check > min) && (check < 0))
+			{
+				min = check;
+			}
+			else if(check == 0)
+			{
+				return min = check;
+			}
+		}
+	}
+
+	return min;
+}
