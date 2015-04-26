@@ -1,0 +1,31 @@
+#include "battleship.h"
+
+
+int main()
+{
+	char p1_board[MAX_ROWS][MAX_COLS] = {'0'};
+	int direction = 0, row_start = 0, col_start = 0;
+	char test1[100] = "pie";
+	char test2[100] = "";
+
+	srand ((unsigned int) time (NULL));
+
+	//my_strcpy(test2, test1);
+
+	//printf ("restult: %s\n", test2);
+
+	
+	initialize_game_board(p1_board, MAX_ROWS, MAX_COLS);
+
+	display_board(p1_board, MAX_ROWS, MAX_COLS);
+
+	direction = generate_dir();
+	generate_start_pt (direction, 5, &row_start, &col_start);
+
+	printf ("row: %d col: %d\n", row_start, col_start);
+	 place_ship (p1_board, 5, 'c');
+	 display_board(p1_board, MAX_ROWS, MAX_COLS);
+
+
+	return 0;
+}
