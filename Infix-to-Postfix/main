@@ -1,0 +1,17 @@
+/*************************************************************
+Programmer: Nate Eastland
+Class: Cpts 122, Spring 2015; Lab Section 6
+Programming Assignment: PA3 - Evaluation of Infix Expressions using Stacks
+Date: 2-16-2015
+Description: This program translates infix expressions into postfix
+			and evaluates them.
+*************************************************************/
+
+#include "test.h"
+
+int main()
+{
+	testMain();
+
+	return 0;
+}
