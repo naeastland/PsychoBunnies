@@ -1,0 +1,862 @@
+/******************************************************************
+Programmer: Nate Eastland
+Class: Cpts 121, Fall 2014; Lab Section 7
+Programming Assignment: PA7
+Date: 12-3-2014
+Description: This program simulates a basic math practice program.
+******************************************************************/
+
+#include "functions.h"
+
+/*******************************************************
+  Function: start()                    
+  Date Created: 12-2-2014                                            
+  Date Last Modified: 12-3-2014                                         
+  Description: Displays a welcome message and the first options menu.                                  
+  Input parameters: None                                  
+  Returns: Nothing                                        
+********************************************************/ 
+
+void start()
+{
+	int option = 0, valid = 0, temp = 0;
+	char input_read[INPUT_LEN], key[] = {'m', 'e', 'n', 'u', '\0'}, initials[4] = {"\0"};
+	
+	printf("Welcome to this Educational Math Program\n");
+	
+	do
+	{
+		display_menu(1);
+		scanf("%d", &option);
+		valid = input_validation(option, 1);
+	} while(!valid);
+	
+	check_options(option, 1, &temp, &temp);
+}
+
+/*******************************************************
+  Function: display_menu()                   
+  Date Created: 12-2-2014                                              
+  Date Last Modified: 12-3-2014                                        
+  Description: This function prints menu options for the user to choose from. Different
+				menus are selected depending upon which function calls this.
+  Input parameters: int set                                  
+  Returns: Nothing                                         
+********************************************************/ 
+
+void display_menu(int set)
+{
+	if (set == 1)
+	{
+		printf("1. Start a new sequence of problems.\n");
+		printf("2. Learn about how to use the program.\n");
+		printf("3. Exit.\n");
+	}
+	else if (set == 2)
+	{
+		printf("1. Start a new sequence of problems.\n");
+		printf("2. Learn about how to use the program.\n");
+		printf("3. Return to current game.\n");
+		printf("4. Save and Quit.\n");
+	}
+}
+
+/*******************************************************
+  Function: input_validation()                    
+  Date Created: 12-2-2014                                              
+  Date Last Modified: 12-3-2014                                        
+  Description: This function (attempts) to validate the input option provided
+				by the user. The option is compared to a specific range of acceptable 
+				inputs dpending on the 'set' integer provided by the function.
+  Input parameters: int option, int set                                   
+  Returns: int valid                                          
+********************************************************/ 
+
+int input_validation(int option, int set)
+{
+	int valid = 1;
+
+	if (set == 1)
+	{
+		if (option > 4 || option < 1)
+		{
+			printf("Sorry, please enter a valid option.\n");
+			printf("Press any key to continue.");
+			getch();
+			valid = 0;
+		}
+	}
+	else if (set == 2)
+	{
+		if (option > 5 || option < 1)
+		{
+			printf("Sorry, please enter a valid option.\n");
+			printf("Press any key to continue.");
+			getch();
+			valid = 0;
+		}
+	}
+
+	return valid;
+}
+
+/*******************************************************
+  Function: check_options()                   
+  Date Created: 12-2-2014                                               
+  Date Last Modified: 12-3-2014                                        
+  Description: This function goes to a specific switch statement depending on the set
+				value passed to it. Each switch statement performs different actions including
+				running a new simulation, displaying how to use the program, returning to the current
+				problem set or exiting either the level or saving and quitting. Exit and Save and Quit
+				are determined by pointers int *problems and int *keep_playing.
+  Input parameters: int option, int set, int *problems, int *keep_playing                                   
+  Returns: Nothing                                         
+********************************************************/ 
+
+void check_options(int option, int set, int *problems, int *keep_playing)
+{
+	int next_option = 0;
+
+	if (set == 1)
+	{
+		switch (option)
+		{
+			case NEW_SEQUENCE : 
+				run_simulator();
+				break;
+			case RULES :
+				rules();
+				display_menu(1);
+				scanf("%d", &next_option);
+				check_options(next_option, 1, problems, keep_playing);
+				break;
+			case EXIT :
+				break;
+		}
+	}
+	else if (set == 2)
+	{
+		switch (option)
+		{
+			case NEW_SEQUENCE : 
+				run_simulator();
+				break;
+			case RULES : 
+				rules();
+				display_menu(2);
+				scanf("%d", &next_option);
+				check_options(next_option, 2, problems, keep_playing);
+				break;
+			case CONTINUE : 
+				break;
+			case SAVE_QUIT : 
+				break;
+		}
+	}
+	else if (set == 3)
+	{
+		switch (option)
+		{
+			case NEW_SEQUENCE : 
+				*problems = 11;
+				break;
+			case RULES : 
+				rules();
+				display_menu(2);
+				scanf("%d", &next_option);
+				check_options(next_option, 2, problems, keep_playing);
+				break;
+			case CONTINUE : 
+				break;
+			case SAVE_QUIT : 
+				*problems = 11;
+				*keep_playing = 0;
+				break;
+		}
+	}
+}
+
+/*******************************************************
+  Function: rules()                   
+  Date Created: 12-2-2014                                              
+  Date Last Modified: 12-3-2014                                        
+  Description: This function prints out basic instructions on how 
+				to use the math program.
+  Input parameters: None                                   
+  Returns: Nothing                                          
+********************************************************/ 
+
+void rules()
+{
+	printf("\n");
+	printf("****************Da Run-Down****************\n");
+	printf("-> First things first. Go to the menu, pick a difficulty.\n");
+	printf("-J> Once you have selected a difficulty, you will be presented a series of\n A 10 problems.\n");
+	printf("-V> Each problem within a level will be of a similar format, but they will get\n A progressively harder.\n");
+	printf("-> Input your answer in the prompted format.\n");
+	printf("-> While you are in a problem set, you can type in 'menu' at any time to\n display the menu.\n");
+	printf("\n");
+}
+
+/*******************************************************
+  Function: level_select()                    
+  Date Created: 12-2-2014                                              
+  Date Last Modified: 12-3-2014                                         
+  Description: This function prints out the set of level options for the user to choose
+				from and returns the number of that level upon validation.
+  Input parameters: None                                    
+  Returns: int level                                         
+********************************************************/ 
+
+int level_select()
+{
+	int level = 0, valid = 0;
+
+	do
+	{
+		printf("Please select a difficulty level by number: \n");
+		printf("Level 1 - Easy\n");
+		printf("Level 2 - Fair\n");
+		printf("Level 3 - Intermediate\n");
+		printf("Level 4 - Hard\n");
+		printf("Level 5 - Impossible\n");
+
+		scanf("%d", &level);
+
+		valid = input_validation(level, 2);
+	} while(!valid);
+
+	return level;
+}
+
+/*******************************************************
+  Function: run_simulator()                   
+  Date Created: 12-2-2014                                               
+  Date Last Modified: 12-3-2014                                         
+  Description: This function handles the bulk of the operations for the
+				math simulation. This level prompts for the user's initials
+				and is the "Save and Quit" level of the program, writing stats
+				to a text file for possible play later.
+  Input parameters: None                                   
+  Returns: Nothing                                         
+********************************************************/ 
+
+void run_simulator()
+{
+	int score = 0, keep_playing = 1, load_last = 0;
+	char input_read[INPUT_LEN], key[] = {'m', 'e', 'n', 'u', '\0'}, initials[4] = {"\0"};
+	FILE *output = NULL, *input = NULL;
+
+	srand ((unsigned int) time(NULL));
+
+	input = fopen("last_play.txt", "r");
+	output = fopen("stats.txt", "w");
+
+	printf("Would you like to load the previous session? (1 for yes, 0 for no)\n");
+	scanf("%d", &load_last);
+
+	if(load_last)
+	{
+		fscanf(input, "%s", initials);
+		fscanf(input, "%d", &score);
+	}
+	else
+	{
+		printf("Btw, please enter your initials:\n");
+	}
+
+	scanf("%s", initials);
+
+	while(keep_playing)
+	{
+		run_2(&keep_playing, &score);
+	}
+
+	printf("See you next time!\n");
+
+	
+	fprintf(output, "%s\n", initials);
+	fprintf(output, "%d", score);
+	fclose(input);
+	fclose(output);
+
+	input = fopen("stats.txt", "r");
+	output = fopen("last_play.txt", "w");
+
+	read_write(input, output);
+
+	fclose(input);
+	fclose(output);
+}
+
+/*******************************************************
+  Function: run_2()                   
+  Date Created: 12-2-2014                                              
+  Date Last Modified: 12-3-2014                                        
+  Description: This function runs through a set of 10 problems for the chosen difficulty
+				level. It passes along a pointer to the player's score and the variable allowing
+				the player to keep playing or quit. The player's score is increased upon a correct
+				answer and reduced for a wrong answer.
+  Input parameters: int *keep_playing, int *score                                   
+  Returns: Nothing                                         
+********************************************************/ 
+
+void run_2(int *keep_playing, int *score)
+{
+	int level = 0, problems = 0;
+
+	level = level_select();
+
+	do
+	{
+		if (level == 1)
+		{
+			level_1(&problems, score, keep_playing);
+		}
+		else if (level == 2)
+		{
+			level_2(&problems, score, keep_playing);
+		}
+		else if (level == 3)
+		{
+			level_3(&problems, score, keep_playing);
+		}
+		else if (level == 4)
+		{
+			level_4(&problems, score, keep_playing);
+		}
+		else
+		{
+			level_5(&problems, score, keep_playing);
+		}
+		
+		problems++;
+
+	}while (problems <= 10);
+}
+
+/*******************************************************
+  Function: level_1()                   
+  Date Created: 12-2-2014                                              
+  Date Last Modified: 12-3-2014                                        
+  Description: This function handles level 1 difficulty problems. It generates problems,
+				asks for user input for the problem and compares the user's input to the 
+				answer. The user can enter 'menu' at any time to access the game menu.
+  Input parameters: int *problems, int *score, int *keep_playing                                   
+  Returns: Nothing                                          
+********************************************************/ 
+
+void level_1(int *problems, int *score, int *keep_playing)
+{
+	int temp = 0, temp2 = 0, temp3 = 0, d1 = 0, d2 = 0, d3 = 0, option = 0, valid = 1, answer = 0;
+	char sign1 = '\0', sign2 = '\0', input_read[INPUT_LEN], burn[INPUT_LEN], key[] = {'m', 'e', 'n', 'u', '\0'};
+
+	if (*problems >= 0 && *problems <= 3)
+	{
+		d1 = rand() % 3 + 1;
+		d2 = rand() % 3 + 1;
+		d3 = rand() % 3 + 1;
+	}
+	else if(*problems >= 4 && *problems <= 6)
+	{
+		d1 = rand() % 6 + 1;
+		d2 = rand() % 6 + 1;
+		d3 = rand() % 6 + 1;
+	}
+	else
+	{
+		d1 = rand() % 10 + 1;
+		d2 = rand() % 10 + 1;
+		d3 = rand() % 10 + 1;
+	}
+
+	temp = rand() % 2;
+	temp2 = rand() % 2;
+
+	if(temp)
+	{
+		sign1 = '+';
+	}
+	else
+	{
+		sign1 = '-';
+	}
+
+	if(temp2)
+	{
+		sign2 = '+';
+	}
+	else
+	{
+		sign2 = '-';
+	}
+
+	if (temp && temp2)
+	{
+		answer = d1 + d2 + d3;
+	}
+	else if (!temp && temp2)
+	{
+		answer = d1 - d2 + d3;
+	}
+	else if (temp && !temp2)
+	{
+		answer = d1 + d2 - d3;
+	}
+	else
+	{
+		answer = d1 - d2 - d3;
+	}
+
+	printf("Here is your problem: %d %c %d %c %d = ?\n", d1, sign1, d2, sign2, d3);
+	//printf("Answer: %d\n", answer);
+
+	scanf("%s", input_read);
+
+	sscanf(input_read,"%d", &temp3);
+
+	if(!strcmp(input_read, key))
+	{
+		do
+		{
+			display_menu(2);
+			scanf("%d", &option);
+			valid = input_validation(option, 2);
+		} while(!valid);
+	
+		check_options(option, 3, problems, keep_playing);
+	}
+	else
+	{
+		if(temp3 == answer)
+		{
+			printf("Good job!\n");
+			*score = *score + 4;
+		}
+		else
+		{
+			printf("Sorry, that is incorrect.\n");
+			*score = *score - 1;
+		}
+	}
+}
+
+/*******************************************************
+  Function: level_2()                   
+  Date Created: 12-2-2014                                              
+  Date Last Modified: 12-3-2014                                        
+  Description: This function handles level 2 difficulty problems. It generates problems,
+				asks for user input for the problem and compares the user's input to the 
+				answer. The user can enter 'menu' at any time to access the game menu. The player's 
+				score is increased upon a correct answer and reduced for a wrong answer.
+  Input parameters: int *problems, int *score, int *keep_playing                                    
+  Returns: Nothing                                          
+********************************************************/ 
+
+void level_2(int *problems, int *score, int *keep_playing)
+{
+	int temp = 0, d1 = 0, d2 = 0, d3 = 0, option = 0, valid = 1, answer = 0;
+	char sign1 = '*', input_read[INPUT_LEN], burn[INPUT_LEN], key[] = {'m', 'e', 'n', 'u', '\0'};
+
+	if (*problems >= 0 && *problems <= 3)
+	{
+		d1 = rand() % 3 + 1;
+		d2 = rand() % 3 + 1;
+	}
+	else if(*problems >= 4 && *problems <= 6)
+	{
+		d1 = rand() % 6 + 1;
+		d2 = rand() % 6 + 1;
+	}
+	else
+	{
+		d1 = rand() % 10 + 1;
+		d2 = rand() % 10 + 1;
+	}
+
+	answer = d1 * d2;
+
+	printf("Here is your problem: %d %c %d  = ?\n", d1, sign1, d2);
+	//printf("Answer: %d\n", answer);
+
+	scanf("%s", input_read);
+
+	sscanf(input_read,"%d", &temp);
+
+	if(!strcmp(input_read, key))
+	{
+		do
+		{
+			display_menu(2);
+			scanf("%d", &option);
+			valid = input_validation(option, 2);
+		} while(!valid);
+	
+		check_options(option, 3, problems, keep_playing);
+	}
+	else
+	{
+		if(temp == answer)
+		{
+			printf("Good job!\n");
+			*score = *score + 5;
+		}
+		else
+		{
+			printf("Sorry, that is incorrect.\n");
+			*score = *score - 1;
+		}
+	}
+}
+
+/*******************************************************
+  Function: level_3()                   
+  Date Created: 12-2-2014                                              
+  Date Last Modified: 12-3-2014                                        
+  Description: This function handles level 3 difficulty problems. It generates problems,
+				asks for user input for the problem and compares the user's input to the 
+				answer. The user can enter 'menu' at any time to access the game menu. The player's 
+				score is increased upon a correct answer and reduced for a wrong answer.
+  Input parameters: int *problems, int *score, int *keep_playing                                     
+  Returns: Nothing                                         
+********************************************************/ 
+
+void level_3(int *problems, int *score, int *keep_playing)
+{
+	int temp = 0, temp2 = 0, d1 = 0, d2 = 0, d3 = 0, com_den = 0, option = 0, valid = 1, answer = 0, remainder = 0;
+	char sign1 = '/', input_read[INPUT_LEN], burn[INPUT_LEN], key[] = {'m', 'e', 'n', 'u', '\0'};
+
+	if (*problems >= 0 && *problems <= 3)
+	{
+		d1 = rand() % 3 + 1;
+		d2 = rand() % 3 + 1;
+	}
+	else if(*problems >= 4 && *problems <= 6)
+	{
+		d1 = rand() % 6 + 1;
+		d2 = rand() % 6 + 1;
+	}
+	else
+	{
+		d1 = rand() % 10 + 1;
+		d2 = rand() % 10 + 1;
+	}
+
+	answer = d1 / d2;
+	remainder = d1 % d2;
+
+	printf("Here is your problem: %d %c %d  = ?\n", d1, sign1, d2);
+	printf("Give the integer value followed by the remainder.\n");
+	//printf("Answer: %d\n R: %d\n", answer, remainder);
+
+	fgets(burn, 4, stdin);
+	fgets(input_read, 4, stdin);
+
+	sscanf(input_read,"%d %d", &temp, &temp2);
+
+	if(!strcmp(input_read, key))
+	{
+		do
+		{
+			display_menu(2);
+			scanf("%d", &option);
+			valid = input_validation(option, 2);
+		} while(!valid);
+	
+		check_options(option, 3, problems, keep_playing);
+	}
+	else
+	{
+		if(temp == answer && temp2 == remainder)
+		{
+			printf("Good job!\n");
+			*score = *score + 6;
+		}
+		else
+		{
+			printf("Sorry, that is incorrect.\n");
+			*score = *score - 1;
+		}
+	}
+}
+
+/*******************************************************
+  Function: level_4()                    
+  Date Created: 12-2-2014                                              
+  Date Last Modified: 12-3-2014                                        
+  Description: This function handles level 4 difficulty problems. It generates problems,
+				asks for user input for the problem and compares the user's input to the 
+				answer. The user can enter 'menu' at any time to access the game menu. The player's 
+				score is increased upon a correct answer and reduced for a wrong answer.
+  Input parameters: int *problems, int *score, int *keep_playing                                    
+  Returns: Nothing                                         
+********************************************************/ 
+
+void level_4(int *problems, int *score, int *keep_playing)
+{
+	int temp = 0, temp2 = 0, temp3 = 0, temp4 = 0, d1 = 0, d2 = 0, d3 = 0, option = 0, valid = 1, answer = 0, numerator = 0, denominator = 0;
+	char sign1 = '\0', sign2 = '\0', burn_c = '\0', input_read[INPUT_LEN], burn[INPUT_LEN], key[] = {'m', 'e', 'n', 'u', '\0'};
+
+	if (*problems >= 0 && *problems <= 3)
+	{
+		d1 = rand() % 3 + 1;
+		d2 = rand() % 7 - 3;
+		d3 = rand() % 3 + 1;
+	}
+	else if(*problems >= 4 && *problems <= 6)
+	{
+		d1 = rand() % 7 + 1;
+		d2 = rand() % 15 - 7;
+		d3 = rand() % 7 + 1;
+	}
+	else
+	{
+		d1 = rand() % 9 + 1;
+		d2 = rand() % 19 - 9;
+		d3 = rand() % 9 + 1;
+	}
+
+	temp = rand() % 2;
+	temp4 = rand() % 2;
+
+	if(temp)
+	{
+		sign1 = '+';
+	}
+	else
+	{
+		sign1 = '-';
+	}
+
+	if(temp4)
+	{
+		sign2 = '*';
+	}
+	else
+	{
+		sign2 = '/';
+	}
+
+	printf("Here is your problem: %d %c %d %c %d = ?\n", d1, sign1, d2, sign2, d3);
+
+	denominator = d3;
+
+	if (temp && !temp4)
+	{
+		numerator = d1 * d3;
+		answer = numerator + d2;
+		printf("Please give your answer in the form of a fraction (num / num)\n");
+	}
+	else if(!temp && !temp4)
+	{
+		answer = numerator - d2;
+		answer = numerator + d2;
+		printf("Please give your answer in the form of a fraction (num / num)\n");
+	}
+	else if (!temp && temp4)
+	{
+		answer = d1 - d2 * d3;
+	}
+	else
+	{
+		answer = d1 + d2 * d3;
+	}
+
+	printf("Answer: %d / %d\n", answer, denominator);
+
+	fgets(burn, 6, stdin);
+	fgets(input_read, 6, stdin);
+
+	sscanf(input_read, "%d %c %d", &temp2, &burn, &temp3);
+	
+	if(!strcmp(input_read, key))
+	{
+		do
+		{
+			display_menu(2);
+			scanf("%d", &option);
+			valid = input_validation(option, 2);
+		} while(!valid);
+	
+		check_options(option, 3, problems, keep_playing);
+	}
+	else if (!temp4)
+	{
+		if(temp2 == answer && temp3 == denominator)
+		{
+			printf("Good job!\n");
+			*score = *score + 7;
+		}
+		else
+		{
+			printf("Sorry, that is incorrect.\n");
+			*score = *score - 1;
+		}
+	}
+	else
+	{
+		if(temp2 == answer)
+		{
+			printf("Good job!\n");
+			*score = *score + 7;
+		}
+		else
+		{
+			printf("Sorry, that is incorrect.\n");
+			*score = *score - 1;
+		}
+	}
+}
+
+/*******************************************************
+  Function: level_5()                   
+  Date Created: 12-2-2014                                              
+  Date Last Modified: 12-3-2014                                        
+  Description: This function handles level 5 difficulty problems. It generates problems,
+				asks for user input for the problem and compares the user's input to the 
+				answer. The user can enter 'menu' at any time to access the game menu. The player's 
+				score is increased upon a correct answer and reduced for a wrong answer.
+  Input parameters: int *problems, int *score, int *keep_playing                                   
+  Returns: Nothing                                          
+********************************************************/ 
+
+void level_5(int *problems, int *score, int *keep_playing)
+{
+	int temp = 0, temp2 = 0, temp3 = 0, temp4 = 0, d1 = 0, d2 = 0, d3 = 0, d4 = 0, option = 0, valid = 1, answer = 0,
+		numerator = 0, numerator2 = 0, denominator = 0;
+	char sign1 = '\0', sign2 = '\0', burn_c = '\0', input_read[INPUT_LEN], burn[INPUT_LEN], key[] = {'m', 'e', 'n', 'u', '\0'};
+
+	if (*problems >= 0 && *problems <= 3)
+	{
+		d1 = rand() % 20 - 10;
+		d2 = rand() % 150 - 75;
+		d3 = rand() % 150 - 75;
+		d4 = rand() % 20 - 10;
+	}
+	else if(*problems >= 4 && *problems <= 6)
+	{
+		d1 = rand() % 30 - 10;
+		d2 = rand() % 200 - 100;
+		d3 = rand() % 200 - 100;
+		d4 = rand() % 30 - 10;
+	}
+	else
+	{
+		d1 = rand() % 50 - 25;
+		d2 = rand() % 300 - 150;
+		d3 = rand() % 300 - 150;
+		d4 = rand() % 50 - 25;
+	}
+
+	temp = rand() % 2;
+	temp4 = rand() % 2;
+
+	if(temp)
+	{
+		sign1 = '+';
+	}
+	else
+	{
+		sign1 = '-';
+	}
+
+	if(temp4)
+	{
+		sign2 = '*';
+	}
+	else
+	{
+		sign2 = '/';
+	}
+
+	printf("Here is your problem: %d %c (%d %c %d) %c %d = ?\n", d1, sign1, d2, sign2, d3, sign2, d4);
+
+	denominator = d4;
+
+	if (temp && !temp4)
+	{
+		numerator = d1 * d4;
+		answer = numerator + (d2 / d3);
+		printf("Please give your answer in the form of a fraction (num / num)\n");
+	}
+	else if(!temp && !temp4)
+	{
+		answer = numerator - (d2 / d3);
+		printf("Please give your answer in the form of a fraction (num / num)\n");
+	}
+	else if (!temp && temp4)
+	{
+		answer = d1 - d2 * d3 * d4;
+	}
+	else
+	{
+		answer = d1 + d2 * d3 * d4;
+	}
+
+	//printf("Answer: %d / %d\n", answer, denominator);
+
+	fgets(burn, 6, stdin);
+	fgets(input_read, 6, stdin);
+
+	sscanf(input_read, "%d %c %d", &temp2, &burn, &temp3);
+	
+	if(!strcmp(input_read, key))
+	{
+		do
+		{
+			display_menu(2);
+			scanf("%d", &option);
+			valid = input_validation(option, 2);
+		} while(!valid);
+	
+		check_options(option, 3, problems, keep_playing);
+	}
+	else if (!temp4)
+	{
+		if(temp2 == answer && temp3 == denominator)
+		{
+			printf("Good job!\n");
+			*score = *score + 7;
+		}
+		else
+		{
+			printf("Sorry, that is incorrect.\n");
+			*score = *score - 1;
+		}
+	}
+	else
+	{
+		if(temp2 == answer)
+		{
+			printf("Good job!\n");
+			*score = *score + 7;
+		}
+		else
+		{
+			printf("Sorry, that is incorrect.\n");
+			*score = *score - 1;
+		}
+	}
+}
+
+/*******************************************************
+  Function: read_write()                    
+  Date Created: 12-2-2014                                              
+  Date Last Modified: 12-3-2014                                       
+  Description: This function copies data from a source file to a destination
+				file. Used to copy the player's data to a file for later play.
+  Input parameters: FILE *input, FILE *output                                   
+  Returns: Nothing                                         
+********************************************************/ 
+
+void read_write(FILE *input, FILE *output)
+{
+	char temp[8];
+
+	while (!feof(input))
+	{
+		fscanf(input, "%s", temp);
+		fprintf(output, "%s", temp);
+		fprintf(output, "\n");
+	}
+}
