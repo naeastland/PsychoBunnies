@@ -1,0 +1,360 @@
+/*************************************************************
+Programmer: Nate Eastland
+Class: Cpts 122, Spring 2015; Lab Section 6
+Programming Assignment: PA3 - Evaluation of Infix Expressions using Stacks
+Date: 2-16-2015
+Description: This program translates infix expressions into postfix
+			and evaluates them.
+*************************************************************/
+
+#include "functions.h"
+
+/*******************************************************
+  Function: acceptInfix()                   
+  Date Created: 2-16-2015                                            
+  Date Last Modified: 2-16-2015                                      
+  Description: This function accepts infix expressions input
+				by the user until they decide to exit the program.
+				It translates the expression to postfix notation,
+				evaluates the expression, then displays the result.
+  Input parameters: None                                   
+  Returns: Nothing                                         
+********************************************************/ 
+
+void acceptInfix()
+{
+	char infix[MAX_SIZE], postfix[MAX_SIZE];
+	int exit = 0;
+
+	do
+	{
+		fflush(stdin);
+		printf("********************************************************************\n");
+		printf("Please neter an infix expression with single digit unsigned integers:\n");
+
+		fgets(infix, MAX_SIZE, stdin);
+
+		convertToPostfix(infix, postfix);
+
+		printf("Would you like to exit the program?\n");
+		printf("(enter 1 for yes, 0 for no)\n");
+
+		scanf("%d", &exit);
+	}while(!exit);
+
+	printf("Adios!\n");
+}
+
+/*******************************************************
+  Function: convertToPostfix()                  
+  Date Created: 2-16-2015                                            
+  Date Last Modified: 2-16-2015                                      
+  Description: This function executes an algorithm to convert an
+				infix expression to a postfix expression. This function 
+				then calls an evaluation function for the expression.
+  Input parameters:  char infix[], char postfix[]. These arrays hold the 
+					infix expression and subsequent sorted postfix expression.
+  Returns: Nothing.                                         
+********************************************************/ 
+
+void convertToPostfix(char infix[], char postfix[])
+{
+	StackNodePtr top = NULL;
+	char tempChar = '\0';
+	int in = 0, post = 0, isOp = 0, result = 0;
+
+	while(tempChar != '\n')
+	{
+		tempChar = infix[in];
+
+		isOp = isOperator(tempChar);
+
+		if(isOp) //if tempChar is an operator
+		{
+			if(!isEmpty(top) && isOperator(top->data))
+			{
+				while(!isEmpty(top) && !precendence(tempChar, top->data))
+				{
+					postfix[post] = pop(&top);
+					post++;
+				}
+
+				push(&top, tempChar);
+			}
+			else
+			{
+				push(&top, tempChar);
+			}
+		}
+		else if (tempChar == '(')
+		{
+			push(&top, tempChar);
+		}
+		else if (tempChar == ')')
+		{
+			while(top->data != '(')
+			{
+				postfix[post] = pop(&top);
+				post++;
+			}
+
+			pop(&top);
+		}
+		else //if tempChar is a number (or just non operator or ()
+		{
+			postfix[post] = infix[in];
+			post++;
+		}
+
+		in++;
+	}
+
+	//position correction
+	post--;
+
+	while(top != NULL)
+	{
+		postfix[post] = pop(&top);
+		post++;
+	}
+		
+	postfix[post] = '\0';
+
+	printf("Infix notation: %s", infix);
+	printf("Postfix notation: %s\n", postfix);
+
+	result = evaluatePostfixExpression(postfix);
+
+	printf("The result of the expression is %d: \n", result);
+	putchar('\n');
+}
+
+/*******************************************************
+  Function: isOperator()                    
+  Date Created: 2-16-2015                                             
+  Date Last Modified: 2-16-2015                                      
+  Description: This function determines if the character passed
+				to it is a mathematical operator.
+  Input parameters: char c, the character to be evaluated                                    
+  Returns: An integer. 1 indicates character is an operator, 0 for not.                                        
+********************************************************/ 
+
+int isOperator(char c)
+{
+	if((c == '+') || (c == '-') || (c == '/') ||
+		(c == '*') || (c == '^') || (c == '%' ))
+	{
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+/*******************************************************
+  Function: push()                   
+  Date Created: 2-16-2015                                             
+  Date Last Modified: 2-16-2015                                      
+  Description: This function creates a new node for the stack,
+				assigns it the new value passed to it, then 
+				reassigns the pointer for the top of the stack to 
+				the new node.
+  Input parameters: StackNodePtr *topPtr, char value - pointer to the top
+					of the stack and the character to be entered as the value
+					for the new node.
+  Returns: Nothing                                         
+********************************************************/ 
+
+void push(StackNodePtr *topPtr, char value)
+{
+	StackNodePtr pMem = NULL;
+
+	pMem = (StackNode*)malloc(sizeof(StackNode));
+
+	pMem->data = value;
+
+	pMem->nextPtr = *topPtr;
+
+	*topPtr = pMem;
+}
+
+/*******************************************************
+  Function: pop()                    
+  Date Created: 2-16-2015                                             
+  Date Last Modified: 2-16-2015                                      
+  Description: This function deletes the top node from the stack
+				and returns the data stored in the deleted node.
+  Input parameters: StackNodePtr *topPtr, pointer to top of stack.                                   
+  Returns: The character stored in the deleted node.                                          
+********************************************************/ 
+
+char pop(StackNodePtr *topPtr)
+{
+	StackNodePtr nodePop = NULL;
+	char charPop = '\0';
+
+	if(isEmpty(*topPtr))
+	{
+		return (' ');
+	}
+	else
+	{
+		nodePop = *topPtr;
+
+		charPop = nodePop->data;
+
+		*topPtr = (*topPtr)->nextPtr;
+
+		free(nodePop);
+
+		return charPop;
+	}
+}
+
+/*******************************************************
+  Function: isEmpty()                   
+  Date Created: 2-16-2015                                             
+  Date Last Modified: 2-16-2015                                      
+  Description: This function determines if the stack is empty.                                  
+  Input parameters: StackNodePtr topPtr, pointer to the stack.                                   
+  Returns: An integer, 1 = stack is empty, 0 = not empty                                         
+********************************************************/ 
+
+int isEmpty(StackNodePtr topPtr)
+{
+	if(topPtr == NULL)
+	{
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+/*******************************************************
+  Function: precendence()                   
+  Date Created: 2-16-2015                                             
+  Date Last Modified: 2-16-2015                                      
+  Description: This function determines if operator under inspection
+				is of higher, equal, or lower precedence than the another
+				operator.
+  Input parameters: char operator1, char operator2 - the operators being examined.                                    
+  Returns: An integer. 0 indicating operator1 is of lower or equal precedence
+			than operator2, 1 otherwise.
+********************************************************/ 
+
+int precendence(char operator1, char operator2)
+{
+	if((operator1 == '+' && operator2 == '*') || (operator1 == '+' && operator2 == '/') ||
+	    (operator1 == '+' && operator2 == '^') || (operator1 == '+' && operator2 == '%') ||
+	    (operator1 == '-' && operator2 == '*') || (operator1 == '-' && operator2 == '/') ||
+	    (operator1 == '-' && operator2 == '^') || (operator1 == '-' && operator2 == '%' ))
+	{
+		return 0;
+	}
+	else if((operator1 == operator2) ||
+			 (operator1 == '+' && operator2 == '-') || (operator1 == '-' && operator2 == '+') ||
+	         (operator1 == '*' && operator2 == '/') || (operator1 == '/' && operator2 == '*') ||
+	         (operator1 == '%' && operator2 == '*') || (operator1 == '*' && operator2 == '%') ||
+	         (operator1 == '%' && operator2 == '/') || (operator1 == '/' && operator2 == '%' ))
+	{
+		return 0;
+	}
+	else
+	{
+		return 1;
+	}
+}
+
+/*******************************************************
+  Function: evaluatePostfixExpression()                   
+  Date Created: 2-16-2015                                             
+  Date Last Modified: 2-16-2015                                      
+  Description: This function evaluates a postfix expression passed to it.                                   
+  Input parameters: char *expr                                   
+  Returns: The integer result of the postfix evaluation.                                        
+********************************************************/ 
+
+int evaluatePostfixExpression(char *expr)
+{
+	StackNodePtr evalStack = NULL;
+	int calc = 0, index = 0, x = 0, y = 0;
+	char tempChar = '\0';
+
+	tempChar = expr[index];
+
+	while(tempChar != '\0')
+	{
+		tempChar = expr[index];
+
+		if(isOperator(tempChar))
+		{
+			x = pop(&evalStack) - 48;
+			y = pop(&evalStack) - 48;
+
+			calc = calculate(y, x, tempChar);
+
+			push(&evalStack, (calc + 48));
+		}
+		else
+		{
+			push(&evalStack, (tempChar));
+		}
+		
+		index++;
+	}
+
+	pop(&evalStack);
+
+	return (evalStack->data - 48);
+}
+
+/*******************************************************
+  Function: calculate()                   
+  Date Created: 2-16-2015                                             
+  Date Last Modified: 2-16-2015                                      
+  Description: This function performs a single calculation on two
+				values passed in to it based upon the operator passed in.
+  Input parameters: int op1, int op2, char opChar
+					op1 and op2 are the input numbers a calculation will be
+					performed with, opChar is the character of the operator.
+  Returns: The integer result of the calculation.                                        
+********************************************************/ 
+
+int calculate(int op1, int op2, char opChar)
+{
+	int result = 0;
+
+	if(opChar == '+')
+	{
+		result = op1 + op2;
+	}
+	else if(opChar == '-')
+	{
+		result = op1 - op2;
+	}
+	else if(opChar == '*')
+	{
+		result = op1 * op2;
+	}
+	else if(opChar == '/')
+	{
+		result = op1 / op2;
+	}
+	else if(opChar == '^')
+	{
+		result = (int)pow((double)op1, op2);
+	}
+	else if(opChar == '%')
+	{
+		result = op1 % op2;
+	}
+	else
+	{
+		result = -1;
+	}
+
+	return result;
+}
