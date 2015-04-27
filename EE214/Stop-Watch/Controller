@@ -1,0 +1,60 @@
+`timescale 1ns / 1ps
+
+module controller(
+	input start,
+	input stop,
+	input inc,
+	input rst,
+	input clk,
+	output run
+    );
+	 
+	localparam S0 = 2'b00;
+	localparam S1 = 2'b01;
+	localparam S2 = 2'b10;
+	localparam S3 = 2'b11;
+	
+	reg [1:0] pState, nState;
+	
+	always @(posedge(clk), posedge(rst)) begin
+		if (rst == 1'b1)
+			pState <= S0;
+		else
+			pState <= nState;
+		end
+		
+	always @(pState, start, stop, inc) begin
+		case (pState)
+			S0 : begin
+				if (start == 1'b1)
+					nState = S2;
+				else if (inc == 1'b1 && start == 1'b0)
+					nState = S3;
+				else
+					nState = S0;
+				end
+			S1 : 
+				begin
+				if (inc == 1'b1)
+					nState = S1;
+				else
+					nState = S0;
+				end
+			S2 : 
+				begin
+				if (stop == 1'b1)
+					nState = S0;
+				else 
+					nState = S2;
+				end		
+			S3 : begin
+					nState = S1;
+				end
+			default :
+				nState = S0;
+		endcase	
+	end
+
+	assign run = (pState == S2 || pState == S3) ? 1'b1 : 1'b0;
+
+endmodule
