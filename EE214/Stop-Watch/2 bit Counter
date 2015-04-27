@@ -1,0 +1,17 @@
+`timescale 1ns / 1ps
+
+module two_bit_counter(
+	input clk,
+	input rst,
+	output reg [1:0] Sel
+    );
+	 
+	 localparam max = 3;
+	 
+	 always @(posedge(clk), posedge(rst)) begin
+		if (rst == 1'b1)
+			Sel <= 2'b0;
+		else
+			Sel <= Sel + 1'b1;
+	end
+endmodule
