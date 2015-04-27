@@ -1,0 +1,62 @@
+`timescale 1ns / 1ps
+
+module shift_reg(
+		input clk,
+		input rst,
+		output [7:0] led
+    );
+	
+	reg L_R;
+
+	reg [7:0] out;	
+	
+	dff thing_1 (
+//    .D(D), 
+    .clk(clk), 
+    .rst(rst), 
+    .clk_div_1(clk_div_1)
+    );
+	 
+	always @(posedge(clk_div_1),posedge(rst)) begin
+		if (rst)
+			out = 8'b00000001;
+		else if (out == 8'b10000000)
+			L_R = 1;
+		else if (out == 8'b00000001)
+			L_R = 0;
+		else if (L_R == 0)
+			out = out << 1;
+		else
+			out = out >> 1;
+		end
+		
+		assign led = out;
+	 
+//	always @(posedge(clk_div_1)) begin
+//		if (count == 7)
+//			L_R <= 1;
+//		else if (L_R == 1)
+//			count <= count + 1;
+//		else 
+//			count <= count - 1;
+//		end
+//		
+//	always @(posedge(rst), posedge(count)) begin
+//		if (rst)
+//			out <= 1;
+//		else
+			
+		
+//		if (rst == 1'b1)
+//			out <= 1;
+//		else if (clk_div_1)
+//			if (L_R <= 7)
+//				out <= out << 1;
+//			else
+//				out <= out - 1;
+//		end
+//		
+//	assign led = out;
+	
+
+endmodule
