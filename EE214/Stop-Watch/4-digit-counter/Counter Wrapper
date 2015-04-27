@@ -1,0 +1,65 @@
+`timescale 1ns / 1ps
+
+module Decimal_Counter(
+	input Cen,
+//	input clk1,
+//	input clk2,
+//	input clk3,
+	input clk4,
+	input rst,
+	output [3:0] digit_0,
+	output [3:0] digit_1,
+	output [3:0] digit_2,
+	output [3:0] digit_3
+    );
+	 
+	 wire [3:0] counter0;
+	 wire [3:0] counter1;
+	 wire [3:0] counter2;
+	 wire [3:0] counter3;
+	 
+	 wire enable0;
+	 wire enable1;
+	 wire enable2;
+	 wire enable3;
+	 
+	 Digit first_seg (
+    .Cen(Cen), 
+    .rst(rst), 
+    .clk(clk4), 
+    .disp(counter0)
+    );
+	 
+	 assign enable0 = (counter0 == 4'b1010) ? 1'b1 : 1'b0;
+	 
+	 Digit second_seg (
+    .Cen(enable0), 
+    .rst(rst), 
+    .clk(clk4), 
+    .disp(counter1)
+    );
+	 
+	 assign enable1 = (counter1 == 4'b1001 && enable0 == 1'b1) ? 1'b1 : 1'b0;
+	 
+	 Digit third_seg (
+    .Cen(enable1), 
+    .rst(rst), 
+    .clk(clk4), 
+    .disp(counter2)
+    );
+	 
+	 assign enable2 = (counter2 == 4'b1001 && enable1 == 1'b1) ? 1'b1 : 1'b0;
+	 
+	 Digit fourth_seg (
+    .Cen(enable2), 
+    .rst(rst), 
+    .clk(clk4), 
+    .disp(counter3)
+    );
+	 
+	 assign digit_0 = counter0;
+	 assign digit_1 = counter1;
+	 assign digit_2 = counter2;
+	 assign digit_3 = counter3;
+
+endmodule
