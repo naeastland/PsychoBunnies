@@ -1,0 +1,93 @@
+`timescale 1ns / 1ps
+
+module StopWatch(
+	input start,
+	input stop,
+	input inc,
+	input clk, 
+	input clear,
+	output [7:0] an,
+	output [6:0] seg
+    );
+	 
+//	 assign an[0] = 1'b0;
+//	 assign an[1] = 1'b0;
+//	 assign an[2] = 1'b0;
+//	 assign an[3] = 1'b0;
+	 assign an[4] = 1'b1;
+	 assign an[5] = 1'b1;
+	 assign an[6] = 1'b1;
+	 assign an[7] = 1'b1;
+	 
+	 wire Cen;
+	 wire speed_1;
+	 wire speed_2;
+	 wire speed_3;
+	 wire speed_4;
+	 wire speed_5;
+	 wire [1:0] picker;
+	 wire [3:0] mux_in0;
+	 wire [3:0] mux_in1;
+	 wire [3:0] mux_in2;
+	 wire [3:0] mux_in3;
+	 wire [3:0] to_seg;
+
+	clock keeper (
+    .clk(clk), 
+    .rst(clear), 
+    .clock1(speed_1), 
+    .clock2(speed_2), 
+    .clock3(speed_3), 
+    .clock4(speed_4), 
+    .clock5(speed_5)
+    );
+	 
+	 controller Control (
+    .start(start), 
+    .stop(stop), 
+    .inc(inc), 
+    .rst(clear), 
+    .clk(speed_4), 
+    .run(Cen)
+    );
+	 
+	 two_bit_counter Selector (
+    .clk(speed_4), 
+    .rst(clear), 
+    .Sel(picker)
+    );
+	 
+	 Decimal_Counter Actually_doing_work (
+    .Cen(Cen), 
+//    .clk1(speed_1), 
+//    .clk2(speed_2), 
+//    .clk3(speed_3), 
+    .clk4(speed_4), 
+    .rst(clear), 
+    .digit_0(mux_in0), 
+    .digit_1(mux_in1), 
+    .digit_2(mux_in2), 
+    .digit_3(mux_in3)
+    );
+	 
+	 Out_Mux Which_one (
+    .Dig0(mux_in0), 
+    .Dig1(mux_in1), 
+    .Dig2(mux_in2), 
+    .Dig3(mux_in3), 
+    .Sel(picker), 
+    .Dig_out(to_seg)
+    );
+	 
+	 Seg_Decoder Decodes_stuff (
+    .En(to_seg), 
+    .seg(seg)
+    );
+	 
+	 Anode_Decoder flash (
+    .Sel(picker), 
+    .an(an[3:0])
+    );
+	 
+
+endmodule
