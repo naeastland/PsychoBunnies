@@ -1,0 +1,20 @@
+`timescale 1ns / 1ps
+
+module Digit(
+	input Cen,
+	input rst,
+	input clk,
+	output reg [3:0] disp
+    );
+	 
+	 localparam max = 10;
+	 
+	 always @(posedge(clk), posedge(rst)) begin		
+			if ((rst == 1'b1) || (disp == max))
+				disp <= 4'b0000;
+			else if (Cen == 1'b1)
+				disp <= disp + 1'b1;
+		end
+	 
+
+endmodule
