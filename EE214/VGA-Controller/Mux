@@ -1,0 +1,17 @@
+`timescale 1ns / 1ps
+
+module el_Mux(
+	input [11:0] I0,
+	input [11:0] I1,
+	input Sel,
+	output reg [11:0] RGB
+    );
+	 
+	 always @(I0, I1, Sel) begin
+		if (Sel == 1'b1)
+			RGB <= I1;
+		else
+			RGB <= I0;
+		end
+
+endmodule
