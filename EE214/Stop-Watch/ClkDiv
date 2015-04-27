@@ -1,0 +1,56 @@
+`timescale 1ns / 1ps
+
+module clock(
+	input clk,
+	input rst,
+	output clock1,
+	output clock2,
+	output clock3,
+	output clock4,
+	output clock5
+    );
+
+	 wire s_1;
+	 wire s_2;
+	 wire s_3;
+	 wire s_4;
+	 wire s_5;
+
+	ClkDivider one_sec (
+    .clk(clk), 
+    .rst(rst), 
+    .clock_1s(s_1)
+    );
+	 
+	 tenth tenth_s (
+    .clk(clk), 
+    .rst(rst), 
+    .clock(s_2)
+    );
+	 
+	 hundredth hundredth_s (
+    .clk(clk), 
+    .rst(rst), 
+    .clock(s_3)
+    );
+	 
+	 milli milli_s (
+    .clk(clk), 
+    .rst(rst), 
+    .clock(s_4)
+    );
+	 
+	 zoom zoom (
+    .clk(clk), 
+    .rst(rst), 
+    .clock(s_5)
+    );
+
+	 
+	 assign clock1 = s_1;
+	 assign clock2 = s_2;
+	 assign clock3 = s_3;
+	 assign clock4 = s_4;
+	 assign clock5 = s_5;
+
+endmodule
