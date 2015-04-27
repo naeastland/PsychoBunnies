@@ -1,0 +1,15 @@
+`timescale 1ns / 1ps
+
+module H_sync_comp(
+	input [9:0] count,
+	output reg Hsync
+    );
+	 
+	 always @(count) begin
+		if(count > 10'd96)
+			Hsync = 1'b1;
+		else
+			Hsync = 1'b0;
+		end
+
+endmodule
