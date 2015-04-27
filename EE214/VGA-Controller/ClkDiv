@@ -1,0 +1,33 @@
+`timescale 1ns / 1ps
+
+module clk_div(
+	input clk,
+	input rst,
+	output reg clock
+    );
+
+	localparam constantNumber = 2;
+
+	reg  count;
+	
+	always @(posedge(clk), posedge(rst)) begin
+		if (rst == 1'b1)
+			count <= 2'b0;
+		else if (count == constantNumber - 1)
+			count <= 2'b0;
+		else 
+			count <= count +1'b1;
+		end
+	
+	always @(posedge(clk), posedge(rst)) begin
+		if(rst == 1'b1)
+			clock <= 1'b0;
+		else if ( count == constantNumber - 1)
+			clock <= ~clock;
+		else
+			clock <= clock;
+	end
+
+
+
+endmodule
