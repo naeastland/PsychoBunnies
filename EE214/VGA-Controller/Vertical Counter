@@ -1,0 +1,19 @@
+`timescale 1ns / 1ps
+
+module VerticalCounter(
+	input En,
+	input clk,
+	input rst,
+	output reg [9:0] Q
+    );
+	 
+	 localparam max = 524;
+	 
+	 always @(posedge(clk), posedge(rst)) begin
+		if ((Q == max) || (rst == 1'b1))
+			Q <= 10'b0000000000;
+		else if (En == 1'b1)
+			Q <= Q + 1'b1;
+		end
+
+endmodule
