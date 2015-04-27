@@ -1,0 +1,16 @@
+`timescale 1ns / 1ps
+
+module V_sync_comp(
+   input [9:0] count,
+	output reg Vsync
+    );
+	 
+	 always @(count) begin
+		if(count > 10'd2)
+			Vsync = 1'b1;
+		else
+			Vsync = 1'b0;
+		end
+
+
+endmodule
