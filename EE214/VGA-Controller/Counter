@@ -1,0 +1,31 @@
+`timescale 1ns / 1ps
+
+module counter(
+   input clk,
+	input rst,
+	output reg [9:0] clock
+    );
+	 
+	localparam constantNumber = 50000;
+
+	reg  [31:0] count;
+	
+	always @(posedge(clk), posedge(rst)) begin
+		if (rst == 1'b1)
+			count <= 32'b0;
+		else if (count == constantNumber - 1)
+			count <= 32'b0;
+		else 
+			count <= count + 1'b1;
+		end
+		
+	always @(posedge(clk), posedge(rst)) begin
+		if(rst == 1'b1)
+			clock <= 10'b0;
+		else if ( count == constantNumber - 1)
+			clock <= clock + 1'b1;
+		else
+			clock <= clock;
+	end
+
+endmodule
