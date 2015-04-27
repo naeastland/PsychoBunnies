@@ -1,0 +1,24 @@
+`timescale 1ns / 1ps
+
+module Out_Mux(
+	input [3:0] Dig0,
+	input [3:0] Dig1,
+	input [3:0] Dig2,
+	input [3:0] Dig3,
+	input [1:0] Sel,
+	output reg [3:0] Dig_out
+    );
+	 
+	 always @(Dig0, Dig1, Dig2, Dig3, Sel) begin
+		if ((Sel[0] == 1'd0) & (Sel[1] == 1'd0))
+			Dig_out <= Dig0;
+		else if ((Sel[0] == 1'd1) & (Sel[1] == 1'd0))
+			Dig_out <= Dig1;
+		else if ((Sel[0] == 1'd0) & (Sel[1] == 1'd1))
+			Dig_out <= Dig2;
+		else
+			Dig_out <= Dig3;
+	 end
+
+
+endmodule
