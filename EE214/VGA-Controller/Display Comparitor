@@ -1,0 +1,75 @@
+`timescale 1ns / 1ps
+
+module Disp_Comp(
+	input [9:0] H_count,
+	input [9:0] V_count,
+	input [9:0] move,
+//	input En,
+	output reg Sel
+    );
+	 
+	 //144, 784, 35, 515
+	 
+//	 always @(H_count, V_count, move) begin
+//		if ((H_count > (move + 10'd412)) && (H_count < (move + 10'd512))) begin
+//			if((V_count > 10'd224) && (V_count < 10'd324))
+//				Sel <= 1'b1;
+//			else
+//				Sel <= 1'b0;
+//			end	
+//		else
+//			Sel <= 1'b0;
+//		end
+
+	always @(H_count, V_count) begin
+		if (H_count == 10'd462)
+			Sel <= 1'b1;
+		else if (V_count == 10'd274)
+			Sel <= 1'b1;
+		else
+			Sel <= 1'b0;
+		end
+		
+
+//	always @(H_count, V_count, En) begin
+//		if (En) begin
+//			if ((V_count > 10'd35) && (V_count < 10'd190)) begin
+//				if ((H_count > 10'd144) && (H_count < 784))
+//					Sel <= 1'b1;
+//				end
+//			else if ((V_count >= 10'd190) && (V_count <= 10'd238)) begin
+//				if (((H_count > 10'd144) && (H_count < 10'd318)) || ((H_count > 10'd322) && (H_count < 10'd784)))
+//					Sel <= 1'b1;
+//				else
+//					Sel <= 1'b0;
+//				end
+//			else if ((V_count >= 10'd239) && (V_count < 10'd243)) begin
+//				if (((H_count > 10'd144) && (H_count < 10'd270)) || ((H_count > 10'd370) && (H_count < 10'd784)))
+//					Sel <= 1'b1;
+//				else
+//					Sel <= 1'b0;
+//				end
+//			else if ((V_count >= 10'd243) && (V_count < 10'd290)) begin
+//				if (((H_count > 10'd144) && (H_count < 10'd318)) || ((H_count > 10'd322) && (H_count < 10'd784)))
+//					Sel <= 1'b1;
+//				else
+//					Sel <= 1'b0;
+//				end
+//			else
+//				Sel <= 1'b0;
+//			end
+//		else
+//			Sel <=1'b0;
+//		end
+
+//	always @(H_count, V_count) begin
+//	if ((H_count > 10'd270) && (H_count < 10'd370)) begin
+//			if((V_count > 10'd190) && (V_count < 10'd290))
+//				Sel <= 1'b1;
+//			else
+//				Sel <= 1'b0;
+//			end
+//		end
+			
+
+endmodule
