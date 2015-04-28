@@ -30,11 +30,5 @@ module dff(
 			clk_div_1 <= clk_div_1;
 	end
 
-//	always @(posedge(clk), posedge(rst)) begin
-//		if (rst == 1)
-//			Q <= 1'b0;
-//		else 
-//			Q <= D;
-//		end
 
 endmodule
