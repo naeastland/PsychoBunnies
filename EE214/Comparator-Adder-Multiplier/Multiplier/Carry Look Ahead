@@ -1,0 +1,98 @@
+`timescale 1ns / 1ps
+
+module cla(
+	input [3:0] A,
+	input [3:0] B,
+	output [3:0] R,
+	output Cout
+    );
+	 
+	 wire [4:0] Carry;
+	 wire [3:0] Gen;
+	 wire [3:0] Prop;
+	 
+	 assign Carry[0] = 0;
+	 
+	 cla_adder add_1 (
+    .A(A[0]), 
+    .B(B[0]), 
+    .Cin(Carry[0]), 
+    .S(R[0]), 
+    .G(Gen[0]), 
+    .P(Prop[0])
+    );
+	 
+	 assign Carry[1] = (Gen[0] | (Prop[0] & Carry[0]));
+	 
+	 cla_adder add_2 (
+    .A(A[1]), 
+    .B(B[1]), 
+    .Cin(Carry[1]), 
+    .S(R[1]), 
+    .G(Gen[1]), 
+    .P(Prop[1])
+    );
+	 
+	 assign Carry[2] = (Gen[1] | (Prop[1] & Gen[0]) | (Prop[1] & Prop[0] & Carry[0]));
+	 	 
+	 cla_adder add_3 (
+    .A(A[2]), 
+    .B(B[2]), 
+    .Cin(Carry[2]), 
+    .S(R[2]), 
+    .G(Gen[2]), 
+    .P(Prop[2])
+    );
+	 
+	 assign Carry[3] = (Gen[2] | (Prop[2] & Gen[1]) |
+								(Prop[2] & Prop[1] & Gen[0]) | (Prop[2] & Prop[1] & Prop[0] & Carry[0]));
+									 
+	 cla_adder add_4 (
+    .A(A[3]), 
+    .B(B[3]), 
+    .Cin(Carry[3]), 
+    .S(R[3]), 
+    .G(Gen[3]), 
+    .P(Prop[3])
+    );
+	 
+	 
+	 
+	 assign Carry[4] = (Gen[3] | (Prop[3] & Gen[2]) |(Prop[3] & Prop[2] & Gen[1])
+							| (Prop[3] & Prop[2] & Prop[1] & Gen[0]) 
+							| (Prop[3] & Prop[2] & Prop[1] & Prop[0] & Carry[0]));
+							
+	assign Cout = Carry[4];
+	 
+//	 HA add_1 (
+//    .A(A[0]), 
+//    .B(B[0]), 
+//    .S(S), 
+//    .Cout(Cout)
+//    );
+//	 
+//	 FA add_2 (
+//    .A(A[1]), 
+//    .B(B[1]), 
+//    .Cin(Cin), 
+//    .S(S), 
+//    .Cout(Cout)
+//    );
+//	 
+//	 FA add_3 (
+//    .A(A[2]), 
+//    .B(B[2]), 
+//    .Cin(Cin), 
+//    .S(S), 
+//    .Cout(Cout)
+//    );
+//	 
+//	 FA add_4 (
+//    .A(A[3]), 
+//    .B(B[3]), 
+//    .Cin(Cin), 
+//    .S(S), 
+//    .Cout(Cout)
+//    );
+
+endmodule
