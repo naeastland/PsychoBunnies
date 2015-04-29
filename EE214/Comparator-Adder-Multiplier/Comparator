@@ -1,0 +1,16 @@
+`timescale 1ns / 1ps
+
+module cmp(
+	input [3:0] A,
+	input [3:0] B,
+	output LT_O,
+	output EQ_O,
+	output GT_O
+    );
+	 
+	 assign LT_O = (A < B) ? 1'b1 : 1'b0;
+	 assign EQ_O = (A == B) ? 1'b1 : 1'b0;
+	 assign GT_O = (A > B) ? 1'b1 : 1'b0;
+
+
+endmodule
